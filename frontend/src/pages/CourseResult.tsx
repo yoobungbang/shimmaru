@@ -34,10 +34,10 @@ import { useCollab } from '@/stores/collab'
 import CollabPanel from '@/components/CollabPanel'
 import { useToasts } from '@/stores/toasts'
 import type { CollabContributor, Course, CourseItem } from '@/types/domain'
-import { calcSlowIndex } from '@/lib/slowIndex'
+import { calcSlowIndex, gemNamesOf } from '@/lib/slowIndex'
 import { splitIntoDays } from '@/lib/itinerary'
-import { isVisitorDataActive, quietRankFor, visitorDataBaseYm } from '@/lib/visitorIndex'
-import { findSigungu } from '@/constants/sigungu'
+import { renderCourseCardBlob } from '@/lib/courseCard'
+import { isVisitorDataActive, visitorDataBaseYm } from '@/lib/visitorIndex'
 import {
   segmentCarMinutes,
   segmentTransitMinutes,
@@ -184,6 +184,46 @@ export default function CourseResult() {
       imageUrl: heroImage,
     })
     toastForShareResult(r, t, pushToast)
+  }
+
+  /** 코스 티켓 카드 — Canvas PNG 생성 후 Web Share(파일) 또는 다운로드. */
+  async function handleTicket() {
+    if (!course) return
+    try {
+      const idx = calcSlowIndex(course)
+      const gems = gemNamesOf(course, lang)
+      const blob = await renderCourseCardBlob(course, shareUrl, {
+        brand: t('appName'),
+        region: t('brand.wordmarkRegion'),
+        profileLabel: course.profile ? PROFILE_LABELS[course.profile][lang] : undefined,
+        placesUnit: t('course.visitedUnit'),
+        km: t('course.km'),
+        min: t('course.min'),
+        stayLabel: t('course.slow.stayLabel'),
+        quietLabel: t('course.slow.quietLabel'),
+        stayScore: idx.stayScore,
+        quietScore: idx.quietScore,
+        gemsLine: gems.length > 0 ? `${t('insights.gemBadge')} · ${gems.join(' · ')}` : undefined,
+        scanHint: t('course.cardScan'),
+        footer: t('course.slow.eyebrow'),
+      })
+      const file = new File([blob], 'shimmaru-course.png', { type: 'image/png' })
+      if (typeof navigator.canShare === 'function' && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: course.title })
+      } else {
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = 'shimmaru-course.png'
+        a.click()
+        URL.revokeObjectURL(url)
+      }
+      pushToast(t('course.cardSaved'), { type: 'success' })
+    } catch (e) {
+      // 공유 시트에서 사용자가 취소한 경우는 조용히 무시.
+      if (e instanceof DOMException && e.name === 'AbortError') return
+      pushToast(t('course.cardFailed'), { type: 'error' })
+    }
   }
 
   function handleSave() {
@@ -430,6 +470,14 @@ export default function CourseResult() {
             <button
               type="button"
               className="btn-secondary"
+              onClick={() => void handleTicket()}
+              title={t('course.cardHint')}
+            >
+              🎫 {t('course.ticketCard')}
+            </button>
+            <button
+              type="button"
+              className="btn-secondary"
               onClick={() => setAddHomeOpen(true)}
               title={t('course.addToHomeHint')}
             >
@@ -569,21 +617,7 @@ function SlowIndexCard({ course }: { course: import('@/types/domain').Course }) 
   const lang = useSettings((s) => s.lang)
   const idx = calcSlowIndex(course)
   // 코스가 경유하는 "숨은 보석"(데이터랩 한적 상위 3) 시군 — 데이터 미로드면 빈 배열.
-  const gemNames = useMemo(() => {
-    const seen = new Set<number>()
-    const names: string[] = []
-    for (const it of course.items) {
-      const code = it.place.sigunguCode
-      if (!code || seen.has(code)) continue
-      seen.add(code)
-      const r = quietRankFor(code)
-      if (r && r.rank <= 3) {
-        const sg = findSigungu(code)
-        if (sg) names.push(sg[lang as 'ko' | 'en' | 'ja' | 'zh'])
-      }
-    }
-    return names
-  }, [course, lang])
+  const gemNames = useMemo(() => gemNamesOf(course, lang), [course, lang])
   const labelTone: Record<typeof idx.label, string> = {
     slow: 'slow-index__label--slow',
     balanced: 'slow-index__label--balanced',
