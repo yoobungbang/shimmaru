@@ -31,6 +31,11 @@ export default {
       edit: '편집',
       remove: '삭제',
       removeConfirm: '이 기록을 삭제할까요?',
+      conquestEyebrow: 'Gyeongbuk Conquest',
+      conquestTitle: '나의 경북 지도',
+      conquestHint: '방문 기록이 남은 시군에 도장이 찍혀요. 22개 시군을 모두 채워보세요.',
+      conquestGems: '숨은 보석 {{n}}곳 정복',
+      conquestNext: '다음엔 어디로? 한적한 시군 보기',
     },
     home: {
       builderEyebrow: '코스 만들기',

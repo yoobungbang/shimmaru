@@ -31,6 +31,11 @@ export default {
       edit: '編集',
       remove: '削除',
       removeConfirm: 'この記録を削除しますか？',
+      conquestEyebrow: 'Gyeongbuk Conquest',
+      conquestTitle: '私の慶北マップ',
+      conquestHint: '訪問記録のある市郡にスタンプが押されます。22市郡を全部集めましょう。',
+      conquestGems: '隠れた名所 {{n}}ヶ所制覇',
+      conquestNext: '次はどこへ？静かな市郡を見る',
     },
     home: {
       builderEyebrow: 'コース作成',

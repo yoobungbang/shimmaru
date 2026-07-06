@@ -133,6 +133,51 @@
   .insights__notice-title {@apply text-body-md font-medium text-ink;}
   .insights__notice-body {@apply mt-2 text-body-sm text-body break-keep;}
 
+  /* ── Journal — 나의 경북 정복 지도 ── */
+  .conquest {@apply mb-10 rounded-xl border border-hairline bg-card p-5 md:p-6;}
+  .conquest__header {@apply flex items-start justify-between gap-4;}
+  .conquest__title {@apply mt-1 font-display text-display-sm text-ink;}
+  .conquest__hint {@apply mt-2 text-caption text-muted break-keep;}
+  .conquest__score {@apply flex items-baseline gap-1 shrink-0;}
+  .conquest__score-num {@apply font-display text-display-md text-primary leading-none;}
+  .conquest__score-total {@apply font-mono text-body-sm text-muted-soft;}
+  .conquest__bar-track {@apply mt-4 h-2.5 rounded-pill bg-surface-strong/50 overflow-hidden;}
+  .conquest__bar-fill {
+    @apply block h-full rounded-pill;
+    background: #f54e00;
+  }
+  .conquest__map {@apply mt-5;}
+  .conquest__svg {@apply block w-full max-w-md mx-auto;}
+  .conquest__stamp {
+    fill: #f54e00;
+    fill-opacity: 0.92;
+    stroke: #f7f7f4;
+    stroke-width: 3;
+  }
+  .conquest__stamp-check {
+    fill: #ffffff;
+    font-size: 26px;
+    font-weight: 700;
+  }
+  .conquest__stamp-label {
+    @apply fill-ink;
+    font-size: 24px;
+    font-weight: 600;
+    paint-order: stroke;
+    stroke: #f7f7f4;
+    stroke-width: 6px;
+    stroke-linejoin: round;
+  }
+  .conquest__dot {
+    fill: none;
+    stroke: #cfcdc4;
+    stroke-width: 3;
+  }
+  .conquest__caption {@apply mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-caption text-muted;}
+  .conquest__ulleung {@apply font-medium text-ink;}
+  .conquest__gems {@apply font-medium text-primary;}
+  .conquest__next {@apply ml-auto font-medium text-primary no-underline;}
+
   /* ── PlaceDetail — 한적 지수 pill ── */
   .quiet-badge {@apply inline-flex w-fit items-center gap-1.5 rounded-pill border border-hairline-strong bg-card px-3 py-1.5 text-sm text-ink no-underline transition-colors hover:bg-canvas-soft;}
   .quiet-badge--gem {@apply border-primary/40;}

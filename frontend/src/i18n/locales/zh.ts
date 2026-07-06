@@ -31,6 +31,11 @@ export default {
       edit: '编辑',
       remove: '删除',
       removeConfirm: '确定删除这条记录吗？',
+      conquestEyebrow: 'Gyeongbuk Conquest',
+      conquestTitle: '我的庆北地图',
+      conquestHint: '留下访问记录的市郡会盖上印章。集满全部22个市郡吧。',
+      conquestGems: '已征服 {{n}} 处隐藏宝石',
+      conquestNext: '下次去哪？看看幽静市郡',
     },
     home: {
       builderEyebrow: '制定路线',

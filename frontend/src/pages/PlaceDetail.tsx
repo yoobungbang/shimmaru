@@ -237,6 +237,7 @@ export default function PlaceDetail() {
                     category: place.category,
                     thumbnail: place.thumbnail,
                     address: place.address,
+                    sigunguCode: place.sigunguCode,
                     visitedAt: new Date().toISOString().slice(0, 10),
                   })
                 }

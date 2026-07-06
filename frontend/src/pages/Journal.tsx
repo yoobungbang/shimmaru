@@ -6,6 +6,7 @@ import TopBar from '@/components/TopBar'
 import CategoryBadge from '@/components/CategoryBadge'
 import Thumbnail from '@/components/Thumbnail'
 import PassProgress from '@/components/PassProgress'
+import ConquestMap from '@/components/ConquestMap'
 import { useJournal, type JournalEntry } from '@/stores/journal'
 import { useSettings } from '@/stores/settings'
 import { askConfirm } from '@/stores/confirm'
@@ -34,6 +35,9 @@ export default function Journal() {
             {t('journal.subtitle')}
           </p>
         </header>
+
+        {/* 정복 지도 — 기록이 1개라도 있으면 지도 도장으로 진행률 시각화 */}
+        {sorted.length > 0 && <ConquestMap entries={sorted} />}
 
         <PassProgress entries={sorted} />
 

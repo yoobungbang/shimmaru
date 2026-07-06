@@ -31,6 +31,11 @@ export default {
       edit: 'Edit',
       remove: 'Delete',
       removeConfirm: 'Delete this entry?',
+      conquestEyebrow: 'Gyeongbuk Conquest',
+      conquestTitle: 'My Gyeongbuk map',
+      conquestHint: 'Districts with a visit record get stamped. Fill in all 22.',
+      conquestGems: '{{n}} hidden gems conquered',
+      conquestNext: 'Where next? See quiet districts',
     },
     home: {
       builderEyebrow: 'Make a course',
