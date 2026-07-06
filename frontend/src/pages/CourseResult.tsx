@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import clsx from 'clsx'
@@ -35,6 +35,7 @@ import CollabPanel from '@/components/CollabPanel'
 import { useToasts } from '@/stores/toasts'
 import type { CollabContributor, Course, CourseItem } from '@/types/domain'
 import { calcSlowIndex } from '@/lib/slowIndex'
+import { splitIntoDays } from '@/lib/itinerary'
 import { isVisitorDataActive, quietRankFor, visitorDataBaseYm } from '@/lib/visitorIndex'
 import { findSigungu } from '@/constants/sigungu'
 import {
@@ -345,22 +346,46 @@ export default function CourseResult() {
 
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
               <SortableContext items={course.items.map((i) => i.place.id)} strategy={verticalListSortingStrategy}>
+                {/* 날짜별 일정표 — 숙박(한옥/템플스테이) 앵커 기준 DAY 분할. 표시 전용(데이터 불변). */}
                 <ol className="course-result__list">
-                  {course.items.map((it, i) => (
-                    <SortableRow
-                      key={it.place.id}
-                      item={it}
-                      index={i + 1}
-                      lang={lang}
-                      collab={Boolean(course.collabCode)}
-                      voted={(it.votes ?? []).includes(meId)}
-                      voteCount={(it.votes ?? []).length}
-                      contributor={it.addedBy ? contributorById.get(it.addedBy) : undefined}
-                      onOpen={() => nav(`/place/${it.place.id}`, { state: { place: it.place } })}
-                      onVote={() => handleVote(it.place.id)}
-                      onRemove={() => removeItem(it.place.id)}
-                    />
-                  ))}
+                  {(() => {
+                    const dayPlans = splitIntoDays(course)
+                    const multiDay = dayPlans.length > 1
+                    let idx = 0
+                    return dayPlans.map((dp) => (
+                      <Fragment key={dp.day}>
+                        {multiDay && (
+                          <li className="cr-day" aria-label={`DAY ${dp.day}`}>
+                            <span className="cr-day__label">DAY {dp.day}</span>
+                            <span className="cr-day__meta">
+                              {dp.items.length}
+                              {t('course.visitedUnit')} · {dp.distanceKm}
+                              {t('course.km')}
+                            </span>
+                            <span className="cr-day__rule" aria-hidden />
+                          </li>
+                        )}
+                        {dp.items.map((it) => {
+                          idx++
+                          return (
+                            <SortableRow
+                              key={it.place.id}
+                              item={it}
+                              index={idx}
+                              lang={lang}
+                              collab={Boolean(course.collabCode)}
+                              voted={(it.votes ?? []).includes(meId)}
+                              voteCount={(it.votes ?? []).length}
+                              contributor={it.addedBy ? contributorById.get(it.addedBy) : undefined}
+                              onOpen={() => nav(`/place/${it.place.id}`, { state: { place: it.place } })}
+                              onVote={() => handleVote(it.place.id)}
+                              onRemove={() => removeItem(it.place.id)}
+                            />
+                          )
+                        })}
+                      </Fragment>
+                    ))
+                  })()}
                 </ol>
               </SortableContext>
             </DndContext>

@@ -62,6 +62,12 @@
   .slow-index__bars {@apply grid gap-5 md:grid-cols-2}
   .slow-index__source {@apply flex items-center gap-1.5 text-caption text-muted-soft}
   .slow-index__gems {@apply flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3.5 py-2.5 text-sm font-medium text-ink no-underline transition-colors hover:bg-primary/10}
+
+  /* 날짜별 일정표 헤더 — DAY 구분선. */
+  .cr-day {@apply flex items-center gap-3 pt-5 pb-1 first:pt-0}
+  .cr-day__label {@apply font-mono text-caption font-semibold uppercase tracking-[0.6px] text-primary}
+  .cr-day__meta {@apply text-caption text-muted-soft whitespace-nowrap}
+  .cr-day__rule {@apply h-px flex-1 bg-hairline}
   .slow-index__gems-badge {@apply not-italic shrink-0 rounded-pill bg-primary/15 px-2 py-0.5 text-[10px] font-semibold text-primary}
 
   /* ScoreBar helper */
