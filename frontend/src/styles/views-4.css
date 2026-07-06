@@ -181,7 +181,7 @@
     background: #f54e00;
   }
   .conquest__map {@apply mt-5;}
-  .conquest__svg {@apply block w-full max-w-md mx-auto;}
+  .conquest__svg {@apply block w-full max-w-sm mx-auto;}
   .conquest__stamp {
     fill: #f54e00;
     fill-opacity: 0.92;
@@ -252,7 +252,7 @@
   .insights-map__info-cta {@apply shrink-0 rounded-pill bg-ink px-4 py-2 text-sm font-medium text-canvas no-underline transition-opacity hover:opacity-85;}
 
   /* ── Insights — 한적한 순 랭킹 바 ── */
-  .insights-rank {@apply mt-6 space-y-2.5;}
+  .insights-rank {@apply mt-6 space-y-2.5 max-w-2xl;}
   .insights-rank__row {@apply grid items-center gap-3;grid-template-columns: 1.6rem minmax(5.5rem, auto) 1fr auto;}
   .insights-rank__num {@apply font-mono text-caption text-muted-soft text-right;}
   .insights-rank__name {@apply text-body-sm text-ink flex items-center gap-1.5 whitespace-nowrap;}

@@ -39,7 +39,8 @@
     @apply flex-1;
   }
   .chatbot__messages--embedded {
-    @apply h-60 md:h-72;
+    /* 대화가 쌓이면 늘어나되 초기(인사 1줄)에는 낮게 — 첫 화면의 빈 크림 영역 방지. */
+    @apply max-h-60 min-h-[7.5rem] md:max-h-72 md:min-h-[8.5rem];
   }
   .chatbot__row {
     @apply flex animate-fade-up;
