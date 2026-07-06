@@ -18,6 +18,7 @@ import CollabStart from '@/components/CollabStart'
 import { useCollab } from '@/stores/collab'
 import { CURATED_COURSES, type CuratedCourse } from '@/constants/curatedCourses'
 import { fetchRainChance } from '@/api/weather'
+import { fetchGyeongbukVisitors } from '@/api/bigdata'
 import { loadVisitorBoost } from '@/lib/visitorIndex'
 import { useFocusTrap } from '@/lib/useFocusTrap'
 import { toast } from '@/stores/toasts'
@@ -392,6 +393,9 @@ export default function Home() {
 
       </section>
 
+      {/* ═══════ DATA TEASER — 데이터랩 라이브 티저 → /insights ═══════ */}
+      <DataTeaser lang={lang} />
+
       {/* ═══════ CURATED — 카드 클릭 즉시 코스 생성 ═══════ */}
       <section className="home__curated">
         <div className="home__curated-head">
@@ -702,6 +706,43 @@ export default function Home() {
 }
 
 /** 큐레이션 카드 — 클릭하면 곧바로 코스 생성. */
+/**
+ * 데이터랩 라이브 티저 — "이번 달 가장 한적한 시군"을 홈 첫 화면에 노출해
+ * 데이터 인사이트(/insights)로 끌어들인다. 데이터 없으면 조용히 숨김(graceful).
+ */
+function DataTeaser({ lang }: { lang: Lang }) {
+  const { t } = useTranslation()
+  const [quiet, setQuiet] = useState<{ name: string } | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    void fetchGyeongbukVisitors().then((res) => {
+      if (cancelled || res.status !== 'ok' || res.items.length === 0) return
+      // items 는 방문자 내림차순 — 마지막이 가장 한적.
+      const least = res.items[res.items.length - 1]
+      const sg = findSigungu(least.sigunguCode)
+      if (sg) setQuiet({ name: sg[lang as 'ko' | 'en' | 'ja' | 'zh'] })
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [lang])
+
+  if (!quiet) return null
+  return (
+    <section className="home-teaser">
+      <Link to="/insights" className="home-teaser__card card">
+        <span className="eyebrow home-teaser__eyebrow">{t('insights.teaserEyebrow')}</span>
+        <span className="home-teaser__title">
+          {t('insights.teaserTitle', { region: quiet.name })}
+        </span>
+        <span className="home-teaser__body">{t('insights.teaserBody')}</span>
+        <span className="home-teaser__cta">{t('insights.teaserCta')} →</span>
+      </Link>
+    </section>
+  )
+}
+
 function CuratedCard({
   c,
   lang,

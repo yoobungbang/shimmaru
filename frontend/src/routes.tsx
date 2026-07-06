@@ -17,6 +17,7 @@ const PlaceDetail = lazy(() => import('@/pages/PlaceDetail'))
 const Explore = lazy(() => import('@/pages/Explore'))
 const Festivals = lazy(() => import('@/pages/Festivals'))
 const FestivalDetail = lazy(() => import('@/pages/FestivalDetail'))
+const Insights = lazy(() => import('@/pages/Insights'))
 const Favorites = lazy(() => import('@/pages/Favorites'))
 const Journal = lazy(() => import('@/pages/Journal'))
 const Settings = lazy(() => import('@/pages/Settings'))
@@ -39,6 +40,8 @@ export const router = createBrowserRouter([
       // 축제 목록 — 캘린더/지도/리스트 토글 지원. cat=festival 리다이렉트 폐기.
       { path: 'festivals', element: <Festivals /> },
       { path: 'festivals/:id', element: <FestivalDetail /> },
+      // 경북 데이터 인사이트 — 데이터랩 방문자 버블 지도 + 한적 랭킹 + 연관 추천.
+      { path: 'insights', element: <Insights /> },
       { path: 'favorites', element: <Favorites /> },
       { path: 'journal', element: <Journal /> },
       { path: 'settings', element: <Settings /> },

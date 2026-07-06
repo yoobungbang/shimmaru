@@ -11,6 +11,7 @@ import FavoriteStar from '@/components/FavoriteStar'
 import PlaceCard from '@/components/PlaceCard'
 import ErrorRetry from '@/components/ErrorRetry'
 import HeritageBadge from '@/components/HeritageBadge'
+import QuietBadge from '@/components/QuietBadge'
 import TempleManners from '@/components/TempleManners'
 import HanokGlossary from '@/components/HanokGlossary'
 import KeeperCard from '@/components/KeeperCard'
@@ -180,6 +181,9 @@ export default function PlaceDetail() {
           </header>
 
           <HeritageBadge placeName={place.name} lang={lang} />
+
+          {/* 한적 지수 — 데이터랩 실방문자 기반 시군 한적 순위 (데이터 없으면 숨김) */}
+          <QuietBadge sigunguCode={place.sigunguCode} />
 
           {/* 장소 설명 — API 응답의 overview 만 표시 (정적 폴백 X) */}
           {place.overview && (

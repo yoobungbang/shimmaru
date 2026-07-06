@@ -174,6 +174,10 @@
   .chip-active {
     @apply !border-ink !bg-ink !text-canvas;
   }
+  /* 숨은 보석(데이터랩 한적 상위) 시군 칩 — 브랜드 오렌지 테두리로 은은히 강조. */
+  .chip-gem {
+    @apply border-primary/40;
+  }
   /* 가로 스크롤 칩/탭 줄 — 음수 마진 edge-bleed + 자체 스크롤. */
   .chip-row {
     @apply flex gap-2 overflow-x-auto scrollbar-hide;

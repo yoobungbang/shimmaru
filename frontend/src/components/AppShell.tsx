@@ -14,6 +14,7 @@ const NAV_ITEMS = [
   { to: '/', key: 'home', icon: '○', exact: true },
   { to: '/explore', key: 'explore', icon: '◇' },
   { to: '/festivals', key: 'festivals', icon: '✦' },
+  { to: '/insights', key: 'insights', icon: '◈' },
   { to: '/favorites', key: 'favorites', icon: '♡' },
   { to: '/journal', key: 'journal', icon: '✎' },
 ] as const

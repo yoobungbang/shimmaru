@@ -88,6 +88,9 @@
   .chatbot__hint {
     @apply text-caption text-muted-soft;
   }
+  .chatbot__gem-hint {
+    @apply text-caption font-medium text-primary;
+  }
   .chatbot__chips {
     @apply flex flex-wrap gap-2 max-h-32 overflow-y-auto;
   }

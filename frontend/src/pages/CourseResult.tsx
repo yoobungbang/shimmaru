@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import clsx from 'clsx'
 import {
@@ -35,7 +35,8 @@ import CollabPanel from '@/components/CollabPanel'
 import { useToasts } from '@/stores/toasts'
 import type { CollabContributor, Course, CourseItem } from '@/types/domain'
 import { calcSlowIndex } from '@/lib/slowIndex'
-import { isVisitorDataActive, visitorDataBaseYm } from '@/lib/visitorIndex'
+import { isVisitorDataActive, quietRankFor, visitorDataBaseYm } from '@/lib/visitorIndex'
+import { findSigungu } from '@/constants/sigungu'
 import {
   segmentCarMinutes,
   segmentTransitMinutes,
@@ -540,7 +541,24 @@ function Stat({ label, value, unit }: { label: string; value: string; unit: stri
  */
 function SlowIndexCard({ course }: { course: import('@/types/domain').Course }) {
   const { t } = useTranslation()
+  const lang = useSettings((s) => s.lang)
   const idx = calcSlowIndex(course)
+  // 코스가 경유하는 "숨은 보석"(데이터랩 한적 상위 3) 시군 — 데이터 미로드면 빈 배열.
+  const gemNames = useMemo(() => {
+    const seen = new Set<number>()
+    const names: string[] = []
+    for (const it of course.items) {
+      const code = it.place.sigunguCode
+      if (!code || seen.has(code)) continue
+      seen.add(code)
+      const r = quietRankFor(code)
+      if (r && r.rank <= 3) {
+        const sg = findSigungu(code)
+        if (sg) names.push(sg[lang as 'ko' | 'en' | 'ja' | 'zh'])
+      }
+    }
+    return names
+  }, [course, lang])
   const labelTone: Record<typeof idx.label, string> = {
     slow: 'slow-index__label--slow',
     balanced: 'slow-index__label--balanced',
@@ -583,6 +601,13 @@ function SlowIndexCard({ course }: { course: import('@/types/domain').Course }) 
           tone="sky"
         />
       </div>
+      {/* 숨은 보석 경유 — 데이터랩 한적 상위 3 시군을 지나면 스토리로 강조 */}
+      {gemNames.length > 0 && (
+        <Link to="/insights" className="slow-index__gems">
+          <em className="slow-index__gems-badge">{t('insights.gemBadge')}</em>
+          {t('insights.courseGems', { regions: gemNames.join(' · ') })} →
+        </Link>
+      )}
       {isVisitorDataActive() && (
         <p className="slow-index__source">
           <span aria-hidden>◆</span>

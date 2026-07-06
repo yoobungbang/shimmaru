@@ -4,6 +4,7 @@ import clsx from 'clsx'
 import { SIGUNGUS, findSigungu } from '@/constants/sigungu'
 import { PROFILE_LABELS } from '@/constants/categories'
 import { COMPANIONS } from '@/constants/companions'
+import { loadVisitorBoost, quietRankFor } from '@/lib/visitorIndex'
 import type { Companion, CourseProfile, DateRange, Lang, TripDuration } from '@/types/domain'
 
 /** 챗봇이 모아 부모에게 넘기는 값 — Home.generateFromInput 의 입력과 동일 형태. */
@@ -110,6 +111,31 @@ export default function TripChatbot({
   const startedRef = useRef(false)
 
   const langKey = lang as 'ko' | 'en' | 'ja' | 'zh'
+
+  // 데이터랩 한적 상위 3 시군 — 지역 칩에 🌿 표시 + 추천 힌트. 미구독이면 빈 Set(표시 없음).
+  const [gemCodes, setGemCodes] = useState<Set<number>>(() => new Set())
+  useEffect(() => {
+    let cancelled = false
+    void loadVisitorBoost().then(() => {
+      if (cancelled) return
+      const gems = new Set<number>()
+      for (const sg of SIGUNGUS) {
+        const r = quietRankFor(sg.code)
+        if (r && r.rank <= 3) gems.add(sg.code)
+      }
+      setGemCodes(gems)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+  const gemNames = useMemo(
+    () =>
+      SIGUNGUS.filter((sg) => gemCodes.has(sg.code))
+        .map((sg) => sg[langKey])
+        .join(' · '),
+    [gemCodes, langKey],
+  )
 
   // 봇 발화 — 짧게 "입력 중…" 인디케이터를 보였다가 메시지를 추가해 대화 느낌을 준다.
   function botSay(text: string) {
@@ -456,16 +482,23 @@ export default function TripChatbot({
         {step === 'region' && (
           <>
             <p className="chatbot__hint">{t('home.chatbot.regionHint')}</p>
+            {gemNames && (
+              <p className="chatbot__gem-hint">
+                🌿 {t('home.chatbot.gemHint', { regions: gemNames })}
+              </p>
+            )}
             <div className="chatbot__chips">
               {SIGUNGUS.map((sg) => {
                 const active = regions.includes(sg.code)
+                const gem = gemCodes.has(sg.code)
                 return (
                   <button
                     key={sg.code}
                     type="button"
                     onClick={() => toggleRegion(sg.code)}
-                    className={clsx('chip', active && 'chip-active')}
+                    className={clsx('chip', active && 'chip-active', gem && !active && 'chip-gem')}
                   >
+                    {gem && <span aria-hidden>🌿</span>}
                     {sg[langKey]}
                   </button>
                 )

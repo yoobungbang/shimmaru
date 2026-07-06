@@ -17,6 +17,14 @@
 
   .home__collab { @apply mt-8; }
 
+  /* ── DATA TEASER — 데이터랩 라이브 → /insights ── */
+  .home-teaser { @apply px-5 md:px-10 pt-2 pb-2; }
+  .home-teaser__card { @apply flex flex-col gap-1 p-5 no-underline border-l-4 border-l-primary transition-shadow hover:shadow-md md:flex-row md:items-center md:gap-4; }
+  .home-teaser__eyebrow { @apply text-primary; }
+  .home-teaser__title { @apply text-body-md font-semibold text-ink break-keep md:flex-1; }
+  .home-teaser__body { @apply text-body-sm text-muted break-keep; }
+  .home-teaser__cta { @apply mt-1 text-sm font-medium text-primary whitespace-nowrap md:mt-0; }
+
   /* ── CURATED SECTION ── */
   .home__curated { @apply px-5 pb-section md:px-10 pt-12 md:pt-section; }
   .home__curated-head { @apply max-w-3xl; }

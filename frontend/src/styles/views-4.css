@@ -128,6 +128,70 @@
   .insights__award-place {@apply truncate text-caption text-muted;}
   .insights__award-photog {@apply truncate text-caption text-muted-soft;}
   .insights__awards-source {@apply mt-4 text-caption text-muted-soft break-keep;}
+  .insights__source {@apply mt-4 text-caption text-muted-soft break-keep;}
+  .insights__notice {@apply p-5;}
+  .insights__notice-title {@apply text-body-md font-medium text-ink;}
+  .insights__notice-body {@apply mt-2 text-body-sm text-body break-keep;}
+
+  /* ── PlaceDetail — 한적 지수 pill ── */
+  .quiet-badge {@apply inline-flex w-fit items-center gap-1.5 rounded-pill border border-hairline-strong bg-card px-3 py-1.5 text-sm text-ink no-underline transition-colors hover:bg-canvas-soft;}
+  .quiet-badge--gem {@apply border-primary/40;}
+  .quiet-badge__gem {@apply not-italic rounded-pill bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary;}
+
+  /* ── Insights — 방문자 버블 지도 ── */
+  .insights-map {@apply mt-6;}
+  .insights-map__svg {@apply block w-full max-w-xl mx-auto rounded-xl border border-hairline bg-card;}
+  .insights-map__skeleton {@apply mt-6 aspect-[0.79/1] w-full max-w-xl mx-auto rounded-xl;}
+  .insights-map__bubble {@apply cursor-pointer transition-opacity;}
+  .insights-map__bubble--selected {
+    stroke: #26251e;
+    stroke-width: 3;
+  }
+  .insights-map__gem-ring {
+    fill: none;
+    stroke: #f54e00;
+    stroke-width: 2.5;
+    stroke-dasharray: 5 5;
+  }
+  .insights-map__label {
+    @apply fill-ink;
+    font-size: 26px;
+    font-weight: 600;
+    paint-order: stroke;
+    stroke: #f7f7f4;
+    stroke-width: 6px;
+    stroke-linejoin: round;
+  }
+  .insights-map__hit {@apply cursor-pointer;}
+  .insights-map__caption {@apply mt-3 flex flex-col gap-1 text-caption text-muted-soft sm:flex-row sm:items-center sm:justify-between;}
+  .insights-map__legend {@apply inline-flex items-center gap-1.5;}
+  .insights-map__legend-dot {@apply inline-block h-3 w-3 rounded-full;}
+  .insights-map__legend-dot--end {@apply ml-3;}
+  .insights-map__info {@apply mt-4 flex items-center justify-between gap-3 p-4;}
+  .insights-map__info-name {@apply text-body-md font-semibold text-ink;}
+  .insights-map__info-meta {@apply mt-0.5 text-body-sm text-body;}
+  .insights-map__info-cta {@apply shrink-0 rounded-pill bg-ink px-4 py-2 text-sm font-medium text-canvas no-underline transition-opacity hover:opacity-85;}
+
+  /* ── Insights — 한적한 순 랭킹 바 ── */
+  .insights-rank {@apply mt-6 space-y-2.5;}
+  .insights-rank__row {@apply grid items-center gap-3;grid-template-columns: 1.6rem minmax(5.5rem, auto) 1fr auto;}
+  .insights-rank__num {@apply font-mono text-caption text-muted-soft text-right;}
+  .insights-rank__name {@apply text-body-sm text-ink flex items-center gap-1.5 whitespace-nowrap;}
+  .insights-rank__gem {@apply not-italic rounded-pill bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary;}
+  .insights-rank__track {@apply h-3.5 rounded-[4px] bg-surface-strong/50 overflow-hidden;}
+  .insights-rank__bar {
+    @apply block h-full rounded-[4px];
+    background: #f54e00;
+  }
+  .insights-rank__value {@apply font-mono text-caption text-muted text-right min-w-[3.2rem];}
+
+  /* ── Insights — 숨은 보석 카드 ── */
+  .insights-gems {@apply mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3;}
+  .insights-gems__card {@apply flex flex-col gap-1 p-5 no-underline transition-shadow hover:shadow-md;}
+  .insights-gems__rank {@apply font-mono text-caption text-primary;}
+  .insights-gems__name {@apply text-lg font-semibold text-ink;}
+  .insights-gems__meta {@apply text-body-sm text-muted;}
+  .insights-gems__cta {@apply mt-2 text-sm font-medium text-primary;}
 
   /* ── Settings ── */
   .settings__body {@apply space-y-6;}
