@@ -17,8 +17,8 @@ const W = 1080
 const H = 1620
 const PAD = 76
 
-// 브랜드 토큰 (tailwind.config 와 동일 값)
-const C = {
+// 브랜드 토큰 (tailwind.config 와 동일 값) — reportCard 등 다른 캔버스 렌더러와 공유.
+export const C = {
   canvas: '#f7f7f4',
   card: '#ffffff',
   ink: '#26251e',
@@ -32,7 +32,7 @@ const C = {
   sky: '#2a78d6',
 } as const
 
-const FONT = (weight: number, px: number) =>
+export const FONT = (weight: number, px: number) =>
   `${weight} ${px}px Pretendard, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`
 
 export interface CardTexts {
@@ -238,7 +238,7 @@ export async function renderCourseCardBlob(
 // ─── 그리기 헬퍼 ─────────────────────────────────────────────────
 
 /** roundRect 폴리필 겸용 헬퍼 — path 만 만든다. */
-function rr(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+export function rr(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
   ctx.beginPath()
   ctx.moveTo(x + r, y)
   ctx.arcTo(x + w, y, x + w, y + h, r)
@@ -296,7 +296,7 @@ function miniBar(
 }
 
 /** 여러 줄 wrap — maxLines 초과분은 말줄임. 마지막으로 쓴 baseline y 를 반환. */
-function wrapText(
+export function wrapText(
   ctx: CanvasRenderingContext2D,
   text: string,
   x: number,
@@ -333,7 +333,7 @@ function wrapText(
 }
 
 /** 폭 초과 시 "…" 말줄임. */
-function ellipsis(ctx: CanvasRenderingContext2D, text: string, maxW: number): string {
+export function ellipsis(ctx: CanvasRenderingContext2D, text: string, maxW: number): string {
   if (ctx.measureText(text).width <= maxW) return text
   const chars = [...text]
   let out = ''

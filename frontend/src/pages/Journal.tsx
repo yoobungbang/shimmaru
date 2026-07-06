@@ -36,6 +36,18 @@ export default function Journal() {
           </p>
         </header>
 
+        {/* Wrapped 리포트 진입 — 기록이 있으면 연말결산 스토리로 */}
+        {sorted.length > 0 && (
+          <Link to="/report" className="journal__report-cta card">
+            <span aria-hidden>🎁</span>
+            <span className="journal__report-text">
+              <strong>{t('report.ctaTitle')}</strong>
+              <em>{t('report.ctaBody')}</em>
+            </span>
+            <span className="journal__report-arrow" aria-hidden>→</span>
+          </Link>
+        )}
+
         {/* 정복 지도 — 기록이 1개라도 있으면 지도 도장으로 진행률 시각화 */}
         {sorted.length > 0 && <ConquestMap entries={sorted} />}
 

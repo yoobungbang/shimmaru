@@ -23,7 +23,7 @@ export default function AppShell() {
   const { t } = useTranslation()
   const location = useLocation()
   const nav = useNavigate()
-  const fullscreen = /^\/course\/map$/.test(location.pathname)
+  const fullscreen = /^\/(course\/map|report)$/.test(location.pathname)
 
   return (
     <div className="app-shell">
