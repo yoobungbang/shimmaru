@@ -34,7 +34,7 @@
 
   /* ── BUILDER MODAL ── */
   .home__modal-overlay { @apply fixed inset-0 z-[55] flex items-end md:items-center justify-center bg-ink/55 backdrop-blur-sm md:p-6; }
-  .home__modal { @apply w-full md:max-w-3xl max-h-[92vh] md:max-h-[85vh] flex flex-col bg-card border-t md:border border-hairline rounded-t-lg md:rounded-lg; }
+  .home__modal { @apply w-full md:max-w-3xl max-h-[92vh] md:max-h-[85vh] flex flex-col bg-card border-t md:border border-hairline rounded-t-lg md:rounded-lg shadow-modal; }
 
   .home__modal-header { @apply flex items-start justify-between gap-4 border-b border-hairline px-5 py-5 md:px-7 md:py-6; }
   .home__modal-header-text { @apply min-w-0; }

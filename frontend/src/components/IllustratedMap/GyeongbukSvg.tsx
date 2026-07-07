@@ -126,7 +126,6 @@ export default function GyeongbukSvg() {
               fill="#3a2d1e"
               opacity="0.75"
               fontWeight="500"
-              style={{ fontFamily: 'var(--font-display, "Noto Serif KR", serif)' }}
             >
               {s.ko}
             </text>
@@ -143,7 +142,6 @@ export default function GyeongbukSvg() {
         fill="#4a6c70"
         opacity="0.55"
         letterSpacing="8"
-        style={{ fontFamily: 'var(--font-display, "Noto Serif KR", serif)' }}
       >
         東 海
       </text>
