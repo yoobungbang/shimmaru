@@ -237,15 +237,16 @@
     font-size: 26px;
     font-weight: 600;
     paint-order: stroke;
-    stroke: #f7f7f4;
+    stroke: #ffffff;
     stroke-width: 6px;
     stroke-linejoin: round;
   }
   .insights-map__hit {@apply cursor-pointer;}
   .insights-map__caption {@apply mt-3 flex flex-col gap-1 text-caption text-muted-soft sm:flex-row sm:items-center sm:justify-between;}
-  .insights-map__legend {@apply inline-flex items-center gap-1.5;}
-  .insights-map__legend-dot {@apply inline-block h-3 w-3 rounded-full;}
-  .insights-map__legend-dot--end {@apply ml-3;}
+  .insights-map__legend {@apply inline-flex items-center gap-2;}
+  /* 순차 램프 스텝 스와치 — 밝음(한적)→진함(붐빔), 2px 서피스 간격 */
+  .insights-map__legend-ramp {@apply inline-flex gap-[2px];}
+  .insights-map__legend-ramp b {@apply block h-3 w-5 first:rounded-l-[4px] last:rounded-r-[4px];}
   .insights-map__info {@apply mt-4 flex items-center justify-between gap-3 p-4;}
   .insights-map__info-name {@apply text-body-md font-semibold text-ink;}
   .insights-map__info-meta {@apply mt-0.5 text-body-sm text-body;}
@@ -258,8 +259,13 @@
   .insights-rank__name {@apply text-body-sm text-ink flex items-center gap-1.5 whitespace-nowrap;}
   .insights-rank__gem {@apply not-italic rounded-pill bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary;}
   .insights-rank__track {@apply h-3.5 rounded-[4px] bg-surface-strong/50 overflow-hidden;}
+  /* 바 색 규칙 — 강조(오렌지)는 스토리의 주인공인 '숨은 보석' 행에만.
+     나머지는 warm 뉴트럴로 후퇴시켜 22개 바가 전부 소리치지 않게. */
   .insights-rank__bar {
     @apply block h-full rounded-[4px];
+    background: #a09c92;
+  }
+  .insights-rank__bar--gem {
     background: #f54e00;
   }
   .insights-rank__value {@apply font-mono text-caption text-muted text-right min-w-[3.2rem];}

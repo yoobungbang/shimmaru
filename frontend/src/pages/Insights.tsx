@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import clsx from 'clsx'
 import TopBar from '@/components/TopBar'
 import RelatedSpots from '@/components/RelatedSpots'
-import GyeongbukSvg, { GyeongbukDefs } from '@/components/IllustratedMap/GyeongbukSvg'
+import GyeongbukSvg from '@/components/IllustratedMap/GyeongbukSvg'
 import { MAINLAND_VIEWBOX, SIGUNGU_GEO } from '@/components/IllustratedMap/sigunguGeo'
 import { projectMainland } from '@/components/IllustratedMap/mapProjection'
 import { fetchGyeongbukVisitors, type BigDataStatus, type RegionVisit } from '@/api/bigdata'
@@ -135,11 +135,9 @@ export default function Insights() {
                 role="img"
                 aria-label={t('insights.mapAria')}
               >
-                <defs>
-                  <GyeongbukDefs />
-                </defs>
-                <GyeongbukSvg />
-                {/* 버블 — 한적(작고 밝음) → 붐빔(크고 진함). 2px 캔버스 링으로 겹침 분리. */}
+                {/* 후퇴형 베이스맵 — 데이터(버블)가 주인공. 일러스트는 다른 화면 전용. */}
+                <GyeongbukSvg variant="quiet" />
+                {/* 버블 — 한적(작고 밝음) → 붐빔(크고 진함). 2px 서피스 링으로 겹침 분리. */}
                 {regions.map((rg) =>
                   rg.px ? (
                     <g key={rg.sigunguCode}>
@@ -149,7 +147,7 @@ export default function Insights() {
                         r={rg.r}
                         fill={SEQ_RAMP[rg.bucket]}
                         fillOpacity={0.88}
-                        stroke="#f7f7f4"
+                        stroke="#ffffff"
                         strokeWidth={2}
                         className={clsx(
                           'insights-map__bubble',
@@ -195,18 +193,14 @@ export default function Insights() {
               </svg>
 
               <figcaption className="insights-map__caption">
+                {/* 순차 램프 범례 — 5단계 스텝 스와치, 밝음(한적)→진함(붐빔) */}
                 <span className="insights-map__legend">
-                  <i
-                    className="insights-map__legend-dot"
-                    style={{ background: SEQ_RAMP[0] }}
-                    aria-hidden
-                  />
                   {t('insights.legendQuiet')}
-                  <i
-                    className="insights-map__legend-dot insights-map__legend-dot--end"
-                    style={{ background: SEQ_RAMP[4] }}
-                    aria-hidden
-                  />
+                  <i className="insights-map__legend-ramp" aria-hidden>
+                    {SEQ_RAMP.map((c) => (
+                      <b key={c} style={{ background: c }} />
+                    ))}
+                  </i>
                   {t('insights.legendBusy')}
                 </span>
                 <span>{t('insights.ulleungNote')}</span>
@@ -255,7 +249,10 @@ export default function Insights() {
                 </span>
                 <span className="insights-rank__track" aria-hidden>
                   <span
-                    className="insights-rank__bar"
+                    className={clsx(
+                      'insights-rank__bar',
+                      rg.quietRank <= 3 && 'insights-rank__bar--gem',
+                    )}
                     style={{ width: `${Math.max(2, (rg.visitors / maxVisitors) * 100)}%` }}
                   />
                 </span>
