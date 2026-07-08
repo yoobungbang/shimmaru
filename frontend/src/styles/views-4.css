@@ -113,6 +113,7 @@
   .insights__title {@apply mt-4 font-display text-display-lg md:text-display-mega text-ink break-keep;}
   .insights__subtitle {@apply mt-5 max-w-2xl text-body-md text-body break-keep;}
   .insights__section {@apply px-5 pb-section md:px-10 border-t border-hairline pt-10;}
+  .insights__section-head {@apply flex flex-wrap items-center gap-2.5;}
   .insights__hint {@apply mt-2 text-body-sm text-muted break-keep;}
   .insights__chips {@apply mt-4 flex flex-wrap gap-2;}
   .insights__chip {@apply rounded-pill border px-3 h-8 text-sm transition-colors;}

@@ -69,10 +69,25 @@ export default function Insights() {
     }
   }, [])
 
+  // 정적 폴백 — 통계청 인구밀도(2023)를 방문 신호의 대리값으로. 라이브 DataLab 이 오기 전에도
+  // "숨은 경북" 데이터 스토리를 즉시(빈 화면 없이) 그린다. 밀도 낮음 = 한적 = 숨은 보석.
+  const proxyVisits: RegionVisit[] = useMemo(
+    () =>
+      SIGUNGUS.map((sg) => ({ sigunguCode: sg.code, visitors: sg.populationDensity })).sort(
+        (a, b) => b.visitors - a.visitors,
+      ),
+    [],
+  )
+
+  // 라이브 방문자 데이터가 실제로 왔는지. 아니면(로딩/미구독/에러/빈) 정적 폴백으로 항상 렌더.
+  const liveOk = status === 'ok' && visits.length > 0
+  const dataMode: 'live' | 'proxy' = liveOk ? 'live' : 'proxy'
+  const effectiveVisits = liveOk ? visits : proxyVisits
+
   // 파생 데이터 — 한적 순 정렬 + 지도 좌표/반지름/색 버킷.
   const regions: RegionDatum[] = useMemo(() => {
-    if (visits.length === 0) return []
-    const asc = [...visits].sort((a, b) => a.visitors - b.visitors)
+    if (effectiveVisits.length === 0) return []
+    const asc = [...effectiveVisits].sort((a, b) => a.visitors - b.visitors)
     const logs = asc.map((v) => Math.log10(Math.max(1, v.visitors)))
     const lmin = Math.min(...logs)
     const lspan = Math.max(...logs) - lmin || 1
@@ -95,7 +110,7 @@ export default function Insights() {
         bucket: Math.min(4, Math.floor(norm * 5)),
       }
     })
-  }, [visits, lang])
+  }, [effectiveVisits, lang])
 
   const quietTop3 = regions.slice(0, 3)
   const maxVisitors = regions.length > 0 ? regions[regions.length - 1].visitors : 0
@@ -106,6 +121,12 @@ export default function Insights() {
   )
   const relatedDefault = relatedSigungu ?? quietTop3[0]?.sigunguCode ?? 11
 
+  // 지표 값 포맷 — 라이브는 주간 방문자수, 폴백은 인구밀도(명/km²).
+  const fmtMetric = (v: number) =>
+    dataMode === 'live'
+      ? t('insights.visitorsWeek', { n: compact.format(v) })
+      : t('insights.densityValue', { n: compact.format(v) })
+
   return (
     <div className="page">
       <TopBar title={t('insights.title')} />
@@ -115,18 +136,21 @@ export default function Insights() {
         <div className="insights__hero-inner">
           <p className="eyebrow">{t('insights.eyebrow')}</p>
           <h1 className="insights__title">{t('insights.heading')}</h1>
-          <p className="insights__subtitle">{t('insights.subtitle')}</p>
+          <p className="insights__subtitle">
+            {dataMode === 'live' ? t('insights.subtitle') : t('insights.subtitleProxy')}
+          </p>
         </div>
       </section>
 
-      {/* ── ① 방문자 버블 지도 ── */}
+      {/* ── ① 방문자 버블 지도 — 정적 폴백으로 항상 렌더, 라이브 오면 실측 교체 ── */}
       <section className="insights__section">
-        <p className="eyebrow">{t('insights.mapTitle')}</p>
+        <div className="insights__section-head">
+          <p className="eyebrow">{t('insights.mapTitle')}</p>
+          {dataMode === 'proxy' && <span className="badge-soft">{t('insights.proxyBadge')}</span>}
+        </div>
         <p className="insights__hint">{t('insights.mapHint')}</p>
 
-        {status === 'loading' && <div className="insights-map__skeleton skeleton__shimmer" />}
-
-        {status === 'ok' && regions.length > 0 && (
+        {regions.length > 0 && (
           <>
             <figure className="insights-map">
               <svg
@@ -185,7 +209,7 @@ export default function Insights() {
                           setSelected((cur) => (cur === rg.sigunguCode ? null : rg.sigunguCode))
                         }
                       >
-                        <title>{`${rg.name} · ${compact.format(rg.visitors)}`}</title>
+                        <title>{`${rg.name} · ${fmtMetric(rg.visitors)}`}</title>
                       </circle>
                     </g>
                   ) : null,
@@ -214,9 +238,7 @@ export default function Insights() {
                   <p className="insights-map__info-name">{selectedRegion.name}</p>
                   <p className="insights-map__info-meta">
                     {t('insights.quietRank', { rank: selectedRegion.quietRank })} ·{' '}
-                    {t('insights.visitorsWeek', {
-                      n: compact.format(selectedRegion.visitors),
-                    })}
+                    {fmtMetric(selectedRegion.visitors)}
                   </p>
                 </div>
                 <Link
@@ -232,10 +254,12 @@ export default function Insights() {
       </section>
 
       {/* ── ② 한적한 순 랭킹 (접근 가능한 데이터 뷰) ── */}
-      {status === 'ok' && regions.length > 0 && (
+      {regions.length > 0 && (
         <section className="insights__section">
           <p className="eyebrow">{t('insights.rankTitle')}</p>
-          <p className="insights__hint">{t('insights.rankHint')}</p>
+          <p className="insights__hint">
+            {dataMode === 'live' ? t('insights.rankHint') : t('insights.rankHintProxy')}
+          </p>
 
           <ol className="insights-rank">
             {regions.map((rg) => (
@@ -262,19 +286,21 @@ export default function Insights() {
           </ol>
 
           <p className="insights__source">
-            {baseYm &&
-              t('insights.source', {
-                ym: `${baseYm.slice(0, 4)}.${baseYm.slice(4)}`,
-              })}
+            {dataMode === 'live'
+              ? baseYm &&
+                t('insights.source', { ym: `${baseYm.slice(0, 4)}.${baseYm.slice(4)}` })
+              : t('insights.proxySource')}
           </p>
         </section>
       )}
 
       {/* ── ③ 숨은 보석 → 코스로 연결 ── */}
-      {status === 'ok' && quietTop3.length > 0 && (
+      {quietTop3.length > 0 && (
         <section className="insights__section">
           <p className="eyebrow">{t('insights.gemsTitle')}</p>
-          <p className="insights__hint">{t('insights.gemsHint')}</p>
+          <p className="insights__hint">
+            {dataMode === 'live' ? t('insights.gemsHint') : t('insights.gemsHintProxy')}
+          </p>
           <div className="insights-gems">
             {quietTop3.map((rg) => (
               <Link
@@ -284,30 +310,10 @@ export default function Insights() {
               >
                 <span className="insights-gems__rank">№{rg.quietRank}</span>
                 <span className="insights-gems__name">{rg.name}</span>
-                <span className="insights-gems__meta">
-                  {t('insights.visitorsWeek', { n: compact.format(rg.visitors) })}
-                </span>
+                <span className="insights-gems__meta">{fmtMetric(rg.visitors)}</span>
                 <span className="insights-gems__cta">{t('insights.gemCta')} →</span>
               </Link>
             ))}
-          </div>
-        </section>
-      )}
-
-      {/* ── 미구독/오류 graceful 안내 ── */}
-      {(status === 'not-subscribed' || status === 'error' || status === 'empty') && (
-        <section className="insights__section">
-          <div className="insights__notice card">
-            <p className="insights__notice-title">
-              {status === 'not-subscribed'
-                ? t('insights.notSubscribedTitle')
-                : t('insights.unavailableTitle')}
-            </p>
-            <p className="insights__notice-body">
-              {status === 'not-subscribed'
-                ? t('insights.notSubscribedBody')
-                : t('insights.unavailableBody')}
-            </p>
           </div>
         </section>
       )}

@@ -534,6 +534,13 @@ export default {
         'Weekly out-of-town + international visitors. Shorter bars are hidden travel spots.',
       gemBadge: 'Hidden gem',
       source: 'Source: KTO Data Lab · week 2 of {{ym}}',
+      subtitleProxy:
+        'We read each of the 22 counties by population density first. When the KTO Data Lab live visitor feed connects, this switches to measured data automatically. Shimmaru uses this signal to surface lesser-known counties.',
+      proxyBadge: 'Density-based',
+      proxySource: 'Source: Statistics Korea population density (2023) · replaced automatically once the live visitor feed connects.',
+      densityValue: '{{n}}/km²',
+      rankHintProxy: 'By population density. The shorter the bar, the quieter the hidden spot.',
+      gemsHintProxy: 'The three least dense counties — a quiet trip awaits.',
       gemsTitle: 'Hidden gems of the month',
       gemsHint: 'The three least-visited districts — quiet journeys await.',
       gemCta: 'See places here',

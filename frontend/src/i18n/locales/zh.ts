@@ -533,6 +533,13 @@ export default {
       rankHint: '按周外地及外国访客数排序。柱越短越是隐藏宝地。',
       gemBadge: '隐藏宝石',
       source: '来源: 韩国观光公社数据实验室 · 基准 {{ym}} 第2周',
+      subtitleProxy:
+        '先用人口密度呈现22个市郡的热闹与静谧。韩国观光数据实验室的实时访客统计接入后会自动切换为实测值。休·玛鲁的路线推荐用这一信号把冷门市郡往前推。',
+      proxyBadge: '基于人口密度',
+      proxySource: '来源: 统计厅人口密度(2023)近似 · 实时访客统计接入后自动替换。',
+      densityValue: '{{n}}人/km²',
+      rankHintProxy: '按人口密度。柱越短，越是安静的隐藏之地。',
+      gemsHintProxy: '人口密度最低的三处 — 静谧之旅在等你。',
       gemsTitle: '本月隐藏宝石',
       gemsHint: '访客最少的三个地方 — 静谧之旅在等你。',
       gemCta: '查看当地景点',
