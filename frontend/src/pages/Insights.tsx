@@ -30,6 +30,8 @@ const SEQ_RAMP = ['#ee9760', '#e07f42', '#cd6423', '#a94a10', '#7f370a'] as cons
 
 const W = MAINLAND_VIEWBOX.width
 const H = MAINLAND_VIEWBOX.height
+/** viewBox 여백 — 가장자리 시군(포항·영덕) 버블 위 직접 라벨이 잘리지 않도록 상하좌우 확장. */
+const PAD = 48
 
 /** 언어 → Intl 로케일 태그 (방문자수 compact 표기). */
 const INTL_TAG: Record<Lang, string> = { ko: 'ko', en: 'en', ja: 'ja', zh: 'zh-CN' }
@@ -154,7 +156,7 @@ export default function Insights() {
           <>
             <figure className="insights-map">
               <svg
-                viewBox={`0 0 ${W} ${H}`}
+                viewBox={`${-PAD} ${-PAD} ${W + PAD * 2} ${H + PAD * 2}`}
                 className="insights-map__svg"
                 role="img"
                 aria-label={t('insights.mapAria')}
