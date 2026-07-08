@@ -195,6 +195,28 @@ describe('generateCourse — 거리 컷오프', () => {
     const c = generateCourse(baseOpts({ candidates: far }))
     expect(c.items.length).toBeGreaterThan(0)
   })
+
+  it('컷오프 폴백은 점진 확장 — 중거리 후보가 있으면 100km 후보까지 끌려오지 않는다', () => {
+    // day cutoff 35km 안엔 아무것도 없지만 ×1.5~×2 확장 반경엔 40km대 후보가 있다.
+    const mid = [38, 42, 45, 48].map((km) => makePlace({ position: offsetKm(km) }))
+    const veryFar = makePlace({ id: 'vf', position: offsetKm(100) })
+    const c = generateCourse(baseOpts({ candidates: [...mid, veryFar] }))
+    expect(c.items.length).toBeGreaterThan(0)
+    expect(c.items.some((it) => it.place.id === 'vf')).toBe(false)
+  })
+
+  it('구간 상한 — 반경 안이라도 장거리 점프를 만드는 아웃라이어는 교체된다', () => {
+    // 1박2일(cutoff 70) — 65km 밖 사찰이 quota(temple 1)로 뽑히면
+    // 근처를 잘 돌다가 갑자기 55km+ 구간이 생긴다. legLimit(50) 초과 → 근처 후보로 교체.
+    const near = Array.from({ length: 8 }, (_, i) => makePlace({ position: offsetKm(2 + i) }))
+    const farTemple = makePlace({ id: 'far-temple', category: 'temple', position: offsetKm(65) })
+    const c = generateCourse(
+      baseOpts({ candidates: [...near, farTemple], duration: '1n2d' }),
+    )
+    expect(c.items.some((it) => it.place.id === 'far-temple')).toBe(false)
+    // 어떤 구간도 1박2일 상한(50km)을 넘지 않는다
+    expect(c.items.every((it) => it.distanceFromPrevKm <= 50)).toBe(true)
+  })
 })
 
 // ─── 스코어링 가중치 ─────────────────────────────────────────────────────────
