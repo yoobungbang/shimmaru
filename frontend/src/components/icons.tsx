@@ -97,3 +97,56 @@ export function SettingsIcon(props: IconProps) {
     </Svg>
   )
 }
+
+/** 자차 — 측면 실루엣 */
+export function CarIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M3.5 13.5l1.4-4.2A2 2 0 0 1 6.8 8h10.4a2 2 0 0 1 1.9 1.3l1.4 4.2" />
+      <path d="M3.5 13.5h17V17a1 1 0 0 1-1 1h-1.3a1 1 0 0 1-1-1v-.6H6.8V17a1 1 0 0 1-1 1H4.5a1 1 0 0 1-1-1z" />
+      <path d="M6.8 15.2h.01M17.2 15.2h.01" />
+    </Svg>
+  )
+}
+
+/** 대중교통 — 버스 정면 */
+export function TransitIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <rect x="5" y="4" width="14" height="14" rx="2.5" />
+      <path d="M5 12h14" />
+      <path d="M8.5 15.2h.01M15.5 15.2h.01" />
+      <path d="M7.5 18.5V20M16.5 18.5V20" />
+    </Svg>
+  )
+}
+
+/** 편집 — 연필(작은 힌트용) */
+export function PencilIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M4.5 19.5l.9-3.7L16.6 4.6a2 2 0 0 1 2.8 2.8L8.2 18.6l-3.7.9z" />
+      <path d="M14.7 6.5l2.8 2.8" />
+    </Svg>
+  )
+}
+
+/** 경로 재최적화 — 굽은 동선 + 진행 화살표 */
+export function RouteIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="6" cy="18" r="1.6" fill="currentColor" stroke="none" />
+      <path d="M6 16.4V10a3 3 0 0 1 3-3h5" />
+      <path d="M11.5 4.5 15 7l-3.5 2.5" />
+    </Svg>
+  )
+}
+
+/** 완료 — 체크 */
+export function CheckIcon(props: IconProps) {
+  return (
+    <Svg {...props} strokeWidth="2.2">
+      <path d="M5 12.5l4.2 4.3L19 7.2" />
+    </Svg>
+  )
+}

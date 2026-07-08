@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import clsx from 'clsx'
@@ -25,6 +25,7 @@ import { useFavorites } from '@/stores/favorites'
 import { PROFILE_LABELS } from '@/constants/categories'
 import TopBar from '@/components/TopBar'
 import CategoryBadge from '@/components/CategoryBadge'
+import { CarIcon, TransitIcon, PencilIcon, RouteIcon, CheckIcon } from '@/components/icons'
 import KakaoMap from '@/components/KakaoMap'
 import Thumbnail from '@/components/Thumbnail'
 import AddToHomeDialog from '@/components/AddToHomeDialog'
@@ -320,7 +321,7 @@ export default function CourseResult() {
               aria-label={t('course.titlePlaceholder')}
               onBlur={(e) => commitTitle(e.target.value)}
             />
-            <span className="course-result__title-pencil" aria-hidden>✎</span>
+            <PencilIcon className="course-result__title-pencil" />
           </div>
           <div className="course-result__badges">
             {course.profile && (
@@ -343,12 +344,14 @@ export default function CourseResult() {
                 unit={t('course.km')}
               />
               <Stat
-                label={`🚗 ${t('course.byCar')}`}
+                label={t('course.byCar')}
+                icon={<CarIcon className="stat__icon" />}
                 value={`${carMin}`}
                 unit={t('course.min')}
               />
               <Stat
-                label={`🚌 ${t('course.byTransit')}`}
+                label={t('course.byTransit')}
+                icon={<TransitIcon className="stat__icon" />}
                 value={`${transitMin}`}
                 unit={t('course.min')}
               />
@@ -379,7 +382,7 @@ export default function CourseResult() {
               <p className="course-result__reorder-hint">{t('course.reorderHint')}</p>
               {course.items.length >= 3 && (
                 <button type="button" className="btn-ghost-outline" onClick={handleReoptimize}>
-                  <span aria-hidden>⤳</span> {t('collab.reoptimize')}
+                  <RouteIcon className="h-4 w-4" /> {t('collab.reoptimize')}
                 </button>
               )}
             </div>
@@ -489,7 +492,13 @@ export default function CourseResult() {
             className={isSaved ? 'btn-secondary' : 'btn-download'}
             onClick={handleSave}
           >
-            {isSaved ? '✓ ' + t('course.saved') : t('course.save')}
+            {isSaved ? (
+              <>
+                <CheckIcon className="h-4 w-4" /> {t('course.saved')}
+              </>
+            ) : (
+              t('course.save')
+            )}
           </button>
         </div>
       </div>
@@ -596,10 +605,23 @@ function SortableRow({
   )
 }
 
-function Stat({ label, value, unit }: { label: string; value: string; unit: string }) {
+function Stat({
+  label,
+  value,
+  unit,
+  icon,
+}: {
+  label: string
+  value: string
+  unit: string
+  icon?: ReactNode
+}) {
   return (
     <div>
-      <p className="eyebrow">{label}</p>
+      <p className="stat__label">
+        {icon}
+        {label}
+      </p>
       <p className="stat__value-row">
         <span className="stat-value">{value}</span>
         <span className="stat__unit">{unit}</span>

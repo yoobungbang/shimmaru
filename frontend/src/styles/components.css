@@ -84,6 +84,13 @@
   .stat-value {
     @apply font-display text-display-md font-normal text-ink;
   }
+  /* 라벨 — eyebrow 톤 + 선택적 SVG 아이콘(자차/대중교통). 이모지 대신 통일 아이콘. */
+  .stat__label {
+    @apply flex items-center gap-1.5 text-eyebrow uppercase text-muted;
+  }
+  .stat__icon {
+    @apply h-3.5 w-3.5 text-muted-soft;
+  }
 
   /* ─── Badges / Pills ────────────────────────────────────────────── */
   .badge {
