@@ -171,6 +171,20 @@ export default defineConfig(({ mode }) => {
         '@': path.resolve(__dirname, './src'),
       },
     },
+    build: {
+      rollupOptions: {
+        output: {
+          // 벤더 분할 — 자주 안 바뀌는 대형 라이브러리를 별도 청크로 빼
+          // 장기 캐싱(앱 코드만 갱신돼도 벤더 청크는 재다운로드 안 함)과 병렬 로딩을 얻는다.
+          // supabase 는 dynamic import 라 여기 없어도 자동으로 별도 청크가 된다.
+          manualChunks: {
+            'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+            i18n: ['i18next', 'react-i18next', 'i18next-browser-languagedetector'],
+            dnd: ['@dnd-kit/core', '@dnd-kit/sortable'],
+          },
+        },
+      },
+    },
     server: {
       port: 5173,
       // 카카오 콘솔에 등록된 도메인은 localhost:5173 뿐 — 다른 포트로 떠버리면 SDK 인증 실패.
