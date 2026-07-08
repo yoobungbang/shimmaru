@@ -1,21 +1,32 @@
 /* BEM 뷰 파셜 — Home. (의미 클래스 100% 추출, JSX 에는 raw 유틸 금지) */
 @layer components {
   /* ── HERO ── */
-  .home__hero { @apply px-5 pt-10 pb-8 md:px-10 md:pt-section md:pb-10; }
-  .home__hero-lead { @apply max-w-3xl; }
+  .home__hero { @apply relative overflow-hidden px-5 pt-10 pb-8 md:px-10 md:pt-section md:pb-10; }
+  /* 시그니처 — 休 낙관(落款). 브랜드명 쉼(休)의 글자를 저대비 워터마크로 히어로 우상단에 찍는다.
+     positioned 형제들이 DOM 순서로 위에 그려지도록 seal 을 섹션 첫 요소로 두고, 콘텐츠 블록에 relative 부여. */
+  .home__hero-seal {
+    @apply pointer-events-none select-none absolute leading-none text-ink;
+    right: -0.06em;
+    top: -0.12em;
+    font-size: clamp(150px, 26vw, 320px);
+    opacity: 0.05;
+    letter-spacing: 0;
+  }
+  .home__hero-lead { @apply relative max-w-3xl; }
   .home__hero-title { @apply text-display-lg md:text-display-mega text-ink break-keep; }
-  .home__hero-title-accent { @apply text-primary; }
+  /* 헤드라인 마침표만 오렌지 — 워드마크 '쉼마루·경상북도'의 오렌지 점 모티프를 히어로까지 연장. */
+  .home__hero-dot { @apply text-primary; }
   .home__hero-subtitle { @apply mt-6 max-w-lg text-body-md text-body break-keep; }
-  .home__chatbot { @apply mt-8; }
+  .home__chatbot { @apply relative mt-8; }
 
-  .home__quick { @apply mt-7; }
+  .home__quick { @apply relative mt-7; }
   .home__quick-divider { @apply flex items-center gap-3; }
   .home__quick-rule { @apply h-px flex-1 bg-hairline; }
   .home__quick-label { @apply font-mono text-[11px] uppercase tracking-[0.6px] text-muted-soft whitespace-nowrap; }
   .home__quick-chips { @apply mt-4 flex flex-wrap gap-2; }
   .home__quick-chip { @apply disabled:opacity-40; }
 
-  .home__collab { @apply mt-8; }
+  .home__collab { @apply relative mt-8; }
 
   /* ── DATA TEASER — 데이터랩 라이브 → /insights ── */
   .home-teaser { @apply px-5 md:px-10 pt-2 pb-2; }

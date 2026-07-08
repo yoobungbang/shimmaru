@@ -89,6 +89,12 @@
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
+/* 히어로 로드 시퀀스 — animate-fade-up 과 조합해 헤드라인→챗봇→칩 순서로 스태거.
+   fill-mode both 로 딜레이 동안 초기 상태(투명)를 유지해 깜빡임 방지.
+   reduced-motion 에선 animate-fade-up 자체가 none 처리되므로 별도 대응 불필요. */
+.anim-delay-1 { animation-delay: 120ms; animation-fill-mode: both; }
+.anim-delay-2 { animation-delay: 240ms; animation-fill-mode: both; }
+
 /* ─────────────────────────────────────────────────────────────
  * 키보드 사용자용 포커스 링 — Cursor warm-ink 윤곽.
  * pointer 클릭(:focus-visible 미충족)에는 표시되지 않아 디자인을 해치지 않는다.

@@ -340,10 +340,15 @@ export default function Home() {
 
       {/* ═══════ HERO — 챗봇 + 빠른 시작 칩 ═══════ */}
       <section className="home__hero">
+        {/* 시그니처 — 브랜드명 쉼(休)의 休 를 낙관처럼 저대비로 찍는다 */}
+        <span className="home__hero-seal" aria-hidden>休</span>
+
         <div className="home__hero-lead animate-fade-up">
           <h1 className="home__hero-title">
             {t('home.heroTitleNew1')}<br />
-            <span className="home__hero-title-accent">{t('home.heroTitleNew2')}</span>
+            {/* 마침표(., 。)만 오렌지 — 워드마크 점 모티프의 연장 */}
+            {t('home.heroTitleNew2').replace(/[.。]$/, '')}
+            <span className="home__hero-dot">{t('home.heroTitleNew2').match(/[.。]$/)?.[0] ?? '.'}</span>
           </h1>
           <p className="home__hero-subtitle">
             {t('home.heroSubtitleNew')}
@@ -352,7 +357,7 @@ export default function Home() {
 
         {/* 메인 — 챗봇과 대화하며 코스 만들기 (버튼식 시나리오 봇, LLM 없음).
            폭은 하단 큐레이션·축제 그리드와 동일하게 콘텐츠 풀폭으로 통일. */}
-        <div className="home__chatbot">
+        <div className="home__chatbot animate-fade-up anim-delay-1">
           <TripChatbot
             variant="embedded"
             lang={lang}
@@ -362,7 +367,7 @@ export default function Home() {
         </div>
 
         {/* 빠른 시작 칩 — 클릭 즉시 코스 생성 */}
-        <div className="home__quick">
+        <div className="home__quick animate-fade-up anim-delay-2">
           <div className="home__quick-divider" aria-hidden>
             <span className="home__quick-rule" />
             <span className="home__quick-label">

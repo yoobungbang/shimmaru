@@ -56,7 +56,7 @@ export default {
       heroTitleNew2: '경북.',
       heroSubtitleNew: '챗봇이 묻는 몇 가지에 답하면 코스를 만들어 드려요. 또는 아래 추천 코스 중 하나로 시작하세요.',
       noFestivalToast: '{{names}}에는 이 기간에 진행되는 축제가 없어 다른 장소로 코스를 구성했어요.',
-      quickChipsEyebrow: 'OR · 큐레이션 빠른 시작',
+      quickChipsEyebrow: 'OR · 바로 시작',
       quickChips: {
         andongHanok: '안동 한옥',
         gyeongjuSilla: '경주 신라',
@@ -75,7 +75,7 @@ export default {
       sticky: {
         eyebrow: '현재 선택',
         autoBase: '거점 자동',
-        generate: '코스 생성 →',
+        generate: '코스 만들기 →',
       },
       chatbot: {
         title: '여행 챗봇',
@@ -142,7 +142,7 @@ export default {
       share: '공유',
       empty: '아직 생성된 코스가 없습니다. 코스를 만들어 보세요.',
       generating: '코스를 만들고 있어요…',
-      generateFailed: '코스 생성에 실패했어요. 네트워크 상태를 확인하고 다시 시도해 주세요.',
+      generateFailed: '코스를 만들지 못했어요. 네트워크 상태를 확인하고 다시 시도해 주세요.',
       reorderHint: '드래그해서 순서를 바꾸세요',
       addPlace: '장소 추가',
       addToCourse: '코스에 담기',
