@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import GyeongbukSvg, { GyeongbukDefs } from '@/components/IllustratedMap/GyeongbukSvg'
+import GyeongbukSvg from '@/components/IllustratedMap/GyeongbukSvg'
 import { MAINLAND_VIEWBOX, SIGUNGU_GEO } from '@/components/IllustratedMap/sigunguGeo'
 import { projectMainland } from '@/components/IllustratedMap/mapProjection'
 import { SIGUNGUS } from '@/constants/sigungu'
@@ -83,10 +83,8 @@ export default function ConquestMap({ entries }: { entries: JournalEntry[] }) {
 
       <figure className="conquest__map">
         <svg viewBox={`0 0 ${W} ${H}`} className="conquest__svg" role="img" aria-label={t('journal.conquestTitle')}>
-          <defs>
-            <GyeongbukDefs />
-          </defs>
-          <GyeongbukSvg />
+          {/* 후퇴형 베이스맵 — 도장(데이터)이 주인공. 일러스트 화풍과의 충돌 제거. */}
+          <GyeongbukSvg variant="quiet" />
           {SIGUNGU_GEO.filter((g) => g.code !== 17).map((g) => {
             const { x, y } = projectMainland(g.center)
             const sg = SIGUNGUS.find((s) => s.code === g.code)

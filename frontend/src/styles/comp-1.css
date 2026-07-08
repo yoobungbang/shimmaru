@@ -26,7 +26,8 @@
   .app-shell__tab-link { @apply flex flex-col items-center justify-center gap-1 py-2.5 text-[11px] font-medium; }
   .app-shell__tab-link--active { @apply text-primary font-semibold; }
   .app-shell__tab-link--inactive { @apply text-muted; }
-  .app-shell__tab-icon { @apply font-mono text-lg leading-none; }
+  /* 탭 아이콘 — 인라인 SVG. 색은 currentColor 라 활성(text-primary)/비활성(text-muted)을 그대로 따른다. */
+  .app-shell__tab-icon { @apply h-[22px] w-[22px]; }
   .app-shell__footer { @apply hidden border-t border-hairline bg-canvas md:block; }
   .app-shell__footer-grid { @apply mx-auto grid w-full max-w-content gap-8 px-10 py-16 md:grid-cols-5; }
   .app-shell__footer-brand { @apply md:col-span-2; }
@@ -141,10 +142,10 @@
   /* ───────── Thumbnail ───────── */
   .thumbnail__fallback { @apply relative grid h-full w-full place-items-center overflow-hidden; }
   .thumbnail__marker { @apply absolute right-3 top-3 h-2 w-2 rounded-full; }
-  .thumbnail__initial { @apply pointer-events-none absolute left-3 bottom-2 font-display text-[40px] leading-none opacity-15 text-ink; }
-  .thumbnail__emoji { @apply relative z-10 drop-shadow-sm; }
-  .thumbnail__emoji--compact { @apply text-3xl; }
-  .thumbnail__emoji--default { @apply text-6xl; }
+  /* 폴백의 주인공 — 장소명 첫 글자를 낙관처럼. 이모지 대신 타이포로 정체성 전달. */
+  .thumbnail__initial { @apply pointer-events-none select-none font-display leading-none text-ink; opacity: 0.16; letter-spacing: -0.04em; }
+  .thumbnail__initial--default { font-size: 64px; }
+  .thumbnail__initial--compact { font-size: 32px; }
   .thumbnail__img { @apply h-full w-full object-cover; }
 
   /* ───────── ScrollFade ───────── */
