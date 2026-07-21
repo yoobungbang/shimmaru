@@ -1,37 +1,35 @@
-# 작업 보고서 (helper-manager) — 6차: "AI 티" 디자인 클린업 완료
+# 작업 보고서 (helper-manager) — 7차: 전체 병합 + 배포 완료
 
-## 0. 이번 라운드 배경
-사용자가 4가지 "AI가 만든 디자인 티" 패턴을 지적: ① 이모지 아이콘, ② 왼쪽 선 강조 박스, ③ 점+텍스트 상태 뱃지, ④ AI 특유 컬러셋(보라/파랑 그라디언트). `feature/design` 워크트리에서 직접 실행.
+## 1. 이번 라운드에서 한 일
+1. `feature/backend`, `feature/ui-frontend`, `feature/design` 세 브랜치 전부 커밋 후 `origin`에 푸시.
+2. `dev`에 순서대로 병합: `feature/backend`(신규 파일, 무충돌) → `feature/design`(docs 2개 충돌 — dev의 더 최신 버전으로 해결) → `feature/ui-frontend`(`Home.tsx` 자동 병합, 무충돌 — 두 브랜치가 서로 다른 영역을 건드려서 깨끗하게 합쳐짐).
+3. 병합된 `dev`에서 `tsc`/`build`/`lint`/테스트(58개) 전부 재검증 — 통과.
+4. `dev`를 `origin`에 푸시.
+5. **배포 중 실제 버그 발견 및 수정**: `api/course.ts`와 `api/_lib/**`의 상대 import가 `./ktoApi.ts`처럼 명시적 `.ts` 확장자를 쓰고 있었는데, 로컬 `tsc`(`--allowImportingTsExtensions` 옵션 사용)에서는 통과했지만 **Vercel Edge Function 번들러는 이를 지원하지 않아 첫 배포가 실패**했다(`referencing unsupported modules`). 확장자를 제거하고 재검증 후 다시 배포해 해결.
+6. Vercel `frontend` 프로젝트에 연결(`vercel link`) 후 `vercel deploy --prod`로 배포 성공. 프로덕션 도메인 `https://frontend-rho-ten-40.vercel.app`에 alias 완료.
+7. 배포본 스모크 테스트: index 200, `/api/course`(빈 바디) 400(검증 로직 정상 동작), `/api/tour` 라우팅 정상(키 없어 업스트림에서 401).
 
-## 1. 무엇을 했나
-- **이모지 → 아이콘**: 기존에 있던 자체 SVG 아이콘 시스템(`components/icons.tsx`, 24px 그리드·currentColor)을 외부 라이브러리 추가 없이 그대로 확장(~50개 아이콘 신규). 카테고리·테마·동반자·"자리를 지키는 사람"·컬렉터 패스 등 5개 데이터 소스에 `icon` 필드를 추가하고, 이를 소비하는 화면/컴포넌트 약 25개를 전부 갱신. 별점(★☆)·하트(♥♡)도 폰트 의존 글리프라 같이 교체. 챗봇 인사말 등 **4개 언어 번역 문자열**에 박혀있던 이모지도 제거.
-  - **의도적 예외**: 캔버스로 그리는 공유카드 이미지 생성기(`courseCard.ts`, `reportCard.ts`)는 SVG를 직접 못 그려서 `emoji` 필드를 보존 — 데이터 정의에 "캔버스 전용" 주석으로 명시.
-- **왼쪽 선 강조 박스**: 2곳(`home-teaser__card`, `journal__report-cta`) 전부 발견해 전체 헤어라인 테두리 + 원형 아이콘 배지로 교체.
-- **점+텍스트 상태 뱃지**: 축제 상태(`status-badge`+`status-dot`, Festivals/FestivalDetail 중복 구현) 원형 점을 상태별 아이콘으로 교체 + pill 모서리를 완전 캡슐형에서 살짝 각진 모양으로 변경. Collab "Live" 배지의 점도 채운 원 → 속 빈 링으로 모양만 바꿔 처리.
-- **컬러셋**: 코드 확인 결과 이미 자체 팔레트("Cursor 시스템" — 따뜻한 크림 캔버스 + 시그니처 오렌지)가 있고 전형적인 AI 보라/파랑 그라디언트가 아니었음 — **추가 작업 불필요, 이미 해결된 상태**로 확인.
+## 2. ⚠️ 중요 — 반드시 확인 필요: Vercel 환경변수가 전부 비어 있음
+`vercel env ls production` 결과 **환경변수가 하나도 설정되어 있지 않습니다.** 즉 지금 배포된 프로덕션은:
+- `TOUR_API_KEY` 없음 → 관광공사 API 전부 실패(장소 검색, 코스 생성, 축제, 인사이트 등 핵심 기능 동작 안 함).
+- `VITE_KAKAO_MAP_KEY` 없음 → 카카오 지도가 안 뜸.
+- `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY` 없음 → `/join` 실시간 협업 자동 비활성화(이건 앱이 안 깨지고 graceful하게 링크 공유로 폴백하니 괜찮음).
 
-## 2. 검증
-- `tsc --noEmit`, `npm run build`, `npm run lint` 전부 통과. **기존 테스트 58개 전부 통과**(회귀 없음). dev 서버로 핵심 모듈 정상 서빙 확인.
-- 미검증: 실제 브라우저 육안 확인(스크린샷)은 안 함 — 코드/빌드/테스트 레벨만.
+**앱이 배포는 됐지만, 키를 넣기 전까지는 첫 화면 정적 UI 외에는 거의 동작하지 않습니다.** 아래 순서로 Vercel 대시보드(Project Settings → Environment Variables) 또는 `vercel env add`로 넣어주셔야 합니다:
+- `TOUR_API_KEY` (필수 — 공공데이터포털 관광공사 키)
+- `VITE_KAKAO_MAP_KEY` (필수 — 카카오 지도)
+- `WEATHER_API_KEY` (선택, 없으면 TOUR_API_KEY 재사용)
+- `FESTIVAL_STD_API_KEY` (선택, 없으면 TOUR_API_KEY 재사용)
+- `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` (선택 — 실시간 협업)
 
-## 3. 변경 규모
-41개 파일(아이콘 시스템 1, 데이터 정의 5, 화면/컴포넌트 ~25, 스타일 3, i18n 4, 보고서 1). 전부 `feature/design` 워크트리에 uncommitted 상태.
+넣은 뒤 `vercel deploy --prod` 재실행(또는 다음 `git push` 시 재배포)이 필요합니다.
 
-## 4. 충돌 가능성
-- **`frontend/src/pages/Home.tsx`, `components/TripChatbot.tsx`가 이번에 대량 수정됨** — `feature/ui-frontend`가 진행 중인 코스 생성 서버 연동(5차 보고서, narrow-case 서버 경로)도 같은 파일들을 건드렸다. 단, design 쪽 변경은 아이콘/마크업 위주라 로직 충돌 가능성은 낮지만, 병합 시 라인 단위 diff 충돌은 날 수 있음 — **두 브랜치 병합 순서를 정해야 함**.
-- 카테고리/테마/동반자 등 `constants/*.ts`에 새 `icon` 필드 추가는 기존 필드를 안 건드리는 순수 추가라 충돌 낮음.
+## 3. 최종 상태
+- `dev` 브랜치: 3개 feature 브랜치 전부 병합 완료, 원격 푸시 완료.
+- `feature/backend`, `feature/ui-frontend`, `feature/design`: 각각 커밋 + 원격 푸시 완료(리뷰/PR 참고용으로 브랜치 유지).
+- 프로덕션 배포: 완료(코드 기준). 환경변수 설정은 사용자 조치 필요(위 2번).
 
-## 5. helper-manager 다음 액션 (병합 준비 상태 점검 필요)
-지금까지 3개 브랜치가 전부 uncommitted 코드 변경을 갖고 있음:
-- `feature/backend`: `api/course.ts`, `api/_lib/**` (신규 파일, 충돌 없음)
-- `feature/ui-frontend`: `frontend/src/api/course.ts`(신규), `Home.tsx`/`courseEngine.ts`(narrow-case 서버 연동)
-- `feature/design`: 41개 파일(아이콘 시스템, `Home.tsx`/`TripChatbot.tsx` 포함)
-
-**`Home.tsx`를 두 브랜치가 동시에 건드리고 있어 병합 시 조율이 필요합니다.** 다음 중 어떻게 진행할지 결정해 주세요:
-1. `feature/design` 변경을 먼저 `dev`에 병합 → `feature/ui-frontend`가 그 위에서 rebase/재적용.
-2. `feature/ui-frontend` 변경을 먼저 병합 → `feature/design`이 재적용.
-3. helper-manager가 두 워크트리의 `Home.tsx`/`TripChatbot.tsx` 변경을 직접 비교해 수동으로 합친 뒤 `dev`에 병합.
-
-## 6. 지난 라운드 이월 사항 (참고)
-- `POST /api/course` narrow-case 연동(5차) — `feature/backend`의 gap(축제/찜/무장애/반려동물/숨은지역) 해소는 아직 대기 중.
-- Supabase 운영 배포 확인, 활용신청 상태, PPT/데모 스크립트 — 계속 미해결.
+## 4. 다음 액션
+- **사용자**: Vercel 환경변수 설정.
+- helper-manager: 환경변수 설정 후 재배포 요청 시 즉시 진행 가능.
+- 이월 사항(계속 미해결): `feature/backend`의 v1 gap(축제/찜/무장애/반려동물/숨은지역 실데이터, 지역코드 매핑) 해소, Supabase 운영 배포 확인, PPT/데모 스크립트.
