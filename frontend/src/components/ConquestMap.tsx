@@ -9,6 +9,7 @@ import { loadVisitorBoost, quietRankFor } from '@/lib/visitorIndex'
 import { useSettings } from '@/stores/settings'
 import type { JournalEntry } from '@/stores/journal'
 import type { Lang } from '@/types/domain'
+import { WaveIcon, CheckIcon, LeafIcon } from '@/components/icons'
 
 /**
  * 나의 경북 정복 지도 — 여행 기록이 남은 시군에 도장을 찍는 게이미피케이션.
@@ -92,9 +93,14 @@ export default function ConquestMap({ entries }: { entries: JournalEntry[] }) {
             return isVisited ? (
               <g key={g.code}>
                 <circle cx={x} cy={y} r={22} className="conquest__stamp" />
-                <text x={x} y={y + 9} textAnchor="middle" className="conquest__stamp-check">
-                  ✓
-                </text>
+                <path
+                  d={`M${x - 7} ${y} l4.5 4.5 L${x + 8} ${y - 7}`}
+                  fill="none"
+                  stroke="#ffffff"
+                  strokeWidth={2.4}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
                 <text x={x} y={y - 34} textAnchor="middle" className="conquest__stamp-label">
                   {sg?.[lang as 'ko' | 'en' | 'ja' | 'zh'] ?? ''}
                 </text>
@@ -107,11 +113,11 @@ export default function ConquestMap({ entries }: { entries: JournalEntry[] }) {
         <figcaption className="conquest__caption">
           {ulleungVisited && (
             <span className="conquest__ulleung">
-              🏝 {SIGUNGUS.find((s) => s.code === 17)?.[lang as 'ko' | 'en' | 'ja' | 'zh']} ✓
+              <WaveIcon aria-hidden width={13} height={13} /> {SIGUNGUS.find((s) => s.code === 17)?.[lang as 'ko' | 'en' | 'ja' | 'zh']} <CheckIcon aria-hidden width={13} height={13} />
             </span>
           )}
           {gemDone > 0 && (
-            <span className="conquest__gems">🌿 {t('journal.conquestGems', { n: gemDone })}</span>
+            <span className="conquest__gems"><LeafIcon aria-hidden width={13} height={13} /> {t('journal.conquestGems', { n: gemDone })}</span>
           )}
           {done < total && (
             <Link to="/insights" className="conquest__next">

@@ -25,7 +25,7 @@ import { useFavorites } from '@/stores/favorites'
 import { PROFILE_LABELS } from '@/constants/categories'
 import TopBar from '@/components/TopBar'
 import CategoryBadge from '@/components/CategoryBadge'
-import { CarIcon, TransitIcon, PencilIcon, RouteIcon, CheckIcon } from '@/components/icons'
+import { CarIcon, TransitIcon, PencilIcon, RouteIcon, CheckIcon, HandshakeIcon, SparkleIcon, MapIcon, DocumentIcon, FestivalIcon, HeartIcon, CloseIcon, MobileIcon } from '@/components/icons'
 import KakaoMap from '@/components/KakaoMap'
 import Thumbnail from '@/components/Thumbnail'
 import AddToHomeDialog from '@/components/AddToHomeDialog'
@@ -120,7 +120,7 @@ export default function CourseResult() {
         <TopBar back />
         <div className="page-body-narrow course-result__stack">
           <header className="course-result__empty-header">
-            <span className="course-result__empty-emoji" aria-hidden>🤝</span>
+            <span className="course-result__empty-emoji" aria-hidden><HandshakeIcon width={28} height={28} /></span>
             <h1 className="course-result__empty-title">
               {t('collab.emptyTitle')}
             </h1>
@@ -130,7 +130,7 @@ export default function CourseResult() {
           <CollabPanel course={course} shareUrl={shareUrl} />
 
           <button type="button" className="btn-primary course-result__fill" onClick={() => nav('/')}>
-            ✨ {t('collab.fillAi')}
+            <SparkleIcon aria-hidden width={15} height={15} /> {t('collab.fillAi')}
           </button>
 
           {favPlaces.length > 0 && (
@@ -159,7 +159,7 @@ export default function CourseResult() {
         <TopBar back />
         <div className="course-result__empty-items">
           <span className="course-result__empty-items-emoji" aria-hidden>
-            🗺️
+            <MapIcon width={30} height={30} />
           </span>
           <div className="course-result__empty-items-box">
             <h2 className="course-result__empty-items-title">{t('course.emptyItemsTitle')}</h2>
@@ -460,7 +460,7 @@ export default function CourseResult() {
         <div className="course-result__actions print-hide">
           <div className="course-result__actions-group">
             <button type="button" className="btn-secondary" onClick={() => nav('/course/map')}>
-              🗺️ {t('course.viewMap')}
+              <MapIcon aria-hidden width={14} height={14} /> {t('course.viewMap')}
             </button>
             <button
               type="button"
@@ -468,7 +468,7 @@ export default function CourseResult() {
               onClick={() => window.print()}
               title={t('course.pdfHint')}
             >
-              📄 {t('course.savePdf')}
+              <DocumentIcon aria-hidden width={14} height={14} /> {t('course.savePdf')}
             </button>
             <button
               type="button"
@@ -476,7 +476,7 @@ export default function CourseResult() {
               onClick={() => void handleTicket()}
               title={t('course.cardHint')}
             >
-              🎫 {t('course.ticketCard')}
+              <FestivalIcon aria-hidden width={14} height={14} /> {t('course.ticketCard')}
             </button>
             <button
               type="button"
@@ -484,7 +484,7 @@ export default function CourseResult() {
               onClick={() => setAddHomeOpen(true)}
               title={t('course.addToHomeHint')}
             >
-              📱 {t('course.addToHome')}
+              <MobileIcon aria-hidden width={14} height={14} /> {t('course.addToHome')}
             </button>
           </div>
           <button
@@ -579,9 +579,9 @@ function SortableRow({
           <span className="cr-row__meta">
             +{item.distanceFromPrevKm}{t('course.km')}
             <span className="course-result__seg-sep">·</span>
-            🚗 {segmentCarMinutes(item.distanceFromPrevKm)}{t('course.min')}
+            <CarIcon aria-hidden width={12} height={12} /> {segmentCarMinutes(item.distanceFromPrevKm)}{t('course.min')}
             <span className="course-result__seg-sep">·</span>
-            🚌 {segmentTransitMinutes(item.distanceFromPrevKm)}{t('course.min')}
+            <TransitIcon aria-hidden width={12} height={12} /> {segmentTransitMinutes(item.distanceFromPrevKm)}{t('course.min')}
           </span>
         )}
       </button>
@@ -594,11 +594,11 @@ function SortableRow({
             aria-pressed={voted}
             aria-label={t('collab.vote')}
           >
-            {voted ? '♥' : '♡'} {voteCount || ''}
+            <HeartIcon aria-hidden filled={voted} width={13} height={13} /> {voteCount || ''}
           </button>
         )}
         <button type="button" onClick={onRemove} className="cr-row__remove" aria-label={t('course.remove')}>
-          ✕
+          <CloseIcon width={13} height={13} />
         </button>
       </div>
     </li>

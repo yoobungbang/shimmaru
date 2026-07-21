@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import clsx from 'clsx'
 import { loadVisitorBoost, quietRankFor } from '@/lib/visitorIndex'
+import { LeafIcon } from '@/components/icons'
 
 /**
  * 장소 상세 — 해당 시군의 데이터랩 한적 순위 pill.
@@ -32,7 +33,7 @@ export default function QuietBadge({ sigunguCode }: { sigunguCode?: number }) {
       className={clsx('quiet-badge', isGem && 'quiet-badge--gem')}
       title={t('insights.title')}
     >
-      <span aria-hidden>🌿</span>
+      <LeafIcon aria-hidden width={13} height={13} />
       {t('insights.placeQuietRank', { rank: rank.rank, total: rank.total })}
       {isGem && <em className="quiet-badge__gem">{t('insights.gemBadge')}</em>}
     </Link>

@@ -44,10 +44,13 @@ Festivals (목록) → FestivalDetail (상세)
 Insights → (데이터랩 방문자 지도) → 숨은 시군 발견 → Home 코스 생성으로 유입
 ```
 
-### 2.3 참여 흐름
+### 2.3 참여 흐름 (코드 확인 완료 — 공유와 참여는 별개 메커니즘)
 ```
-공유받은 링크(/course/shared/:payload) 열람
-  → 참여 코드로 진입(/join/:code) → 코스 공동 편집/열람 (동행 기능 추정)
+[공유 링크] /course/shared/:payload 열람 → base64url payload 디코드 → CourseResult (읽기 전용 스냅샷, 서버 없음)
+
+[실시간 참여] CourseEdit 에서 방 생성(코드 발급, 예: GB-XXXXX)
+  → 상대가 /join/:code 로 진입 → Supabase 실시간 방 참여 → CourseEdit 공동 편집(버전 기반 LWW + 병합)
+  → Supabase 미설정 환경에서는 /join 진입 시 안내 후 홈으로 자동 폴백
 ```
 
 ### 2.4 기록/결산 흐름
@@ -55,17 +58,21 @@ Insights → (데이터랩 방문자 지도) → 숨은 시군 발견 → Home �
 여행 후 Journal 에 기록 → 연말 Report(Wrapped) 로 스토리 형태 결산
 ```
 
-## 3. 내비게이션 구조 (추정 — 실 UI 확인 필요)
-- 하단 탭 또는 상단 메뉴로 `Home / Explore / Festivals / Insights / Favorites / Journal / Settings` 접근 추정.
-- `Course*`, `PlaceDetail`, `FestivalDetail`, `Report`, `join` 은 딥링크/플로우 진입 화면으로 별도 탭 없이 흐름 중 진입 추정.
-- **실제 하단 탭 구성은 `feature/ui-frontend`/`feature/design` 보고서에서 확정 필요.**
+## 3. 내비게이션 구조 (코드 확인 완료 — `frontend/src/components/AppShell.tsx`)
+- **단일 내비게이션 소스**(`NAV_ITEMS`)를 상단(데스크탑)·하단(모바일) 메뉴가 공유.
+- **모바일 하단 탭바(6개, 전부 노출)**: Home / Explore / Festivals / Insights / Favorites / Journal.
+- **데스크탑 상단 메뉴(4개)**: Home 제외(워드마크가 대체) — Explore / Festivals / Insights / Favorites / Journal 중 실제로는 워드마크+4개 노출, 우측에 언어 전환·"코스 생성" CTA 버튼·설정 아이콘.
+- **Settings**는 1차 내비게이션이 아닌 유틸리티로 분리 — 헤더 우측 톱니 아이콘으로만 진입.
+- `Course*`(map/edit/shared/join), `PlaceDetail`, `FestivalDetail`, `Report`는 딥링크/플로우 진입 화면으로 탭 없이 흐름 중 진입.
+- `/course/map`, `/report`는 풀스크린 모드(`fullscreen` 판정) — 헤더/탭바/푸터 전부 숨김.
+- 홈이 아닌 화면에서 "코스 생성" CTA 클릭 시 홈으로 이동 후 `shimmaru:open-builder` 커스텀 이벤트로 챗봇 빌더 모달을 원격 오픈.
 
 ## 4. 다국어 / PWA 고려사항
 - 전 페이지 i18next 기반 4개 언어(한/영/일/중) 지원 대상.
 - PWA 오프라인 폴백 화면 존재 여부 및 위치 확인 필요(라우트에 명시적 오프라인 페이지 없음 — Service Worker 레벨 처리 추정).
 
 ## 5. 미결 사항
-- [ ] 실제 내비게이션 UI(탭바/메뉴) 구성 확인.
-- [ ] `CourseEdit`의 구체적 편집 기능 범위(순서 변경/장소 교체/시간 조정 등) 확인.
-- [ ] `CourseJoin`(동행 초대) 기능이 MVP 범위에 포함되는지 확인 — 서버 저장 없이 어떻게 동기화되는지도 함께 확인.
-- [ ] 오프라인 폴백 화면/배너 존재 여부 확인.
+- [x] 내비게이션 UI(탭바/메뉴) 구성 확인 — §3 참고.
+- [x] `CourseEdit` 편집 범위 — `@dnd-kit` 기반 드래그 순서 변경 + `reoptimizeCourse`(재최적화)/`recomputeCourse`(재계산). 협업 중이면 편집 결과를 `useCollab.publish`로 디바운스 반영.
+- [x] `CourseJoin`(동행 초대)은 MVP 범위에 포함 — Supabase 실시간 방으로 동기화(서버 저장 있음, §2.3·`docs/API_SPEC.md` §5.2 참고). 단, 환경변수 미설정 시 자동 비활성화.
+- [ ] 오프라인 폴백 화면/배너 존재 여부 확인 — `AppShell`에 `OfflineBanner` 컴포넌트 존재 확인됨(전역 배너), 별도 풀 페이지 오프라인 화면 존재 여부는 미확인.

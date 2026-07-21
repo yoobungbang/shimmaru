@@ -48,9 +48,14 @@ frontend/src/api/*.ts  →  /api/<proxy>?...  →  api/<proxy>.ts (Edge Function
 - **응답**: HTML 원본 → 클라이언트(`frontend/src/api/templestay.ts`)가 `select#templeId option` 파싱.
 - **캐시**: `s-maxage=3600, stale-while-revalidate=86400`
 
-### 2.5 `GET/POST /api/og-image`
-- **역할**: OG 커버 이미지 생성/서빙 (코스 공유 시 소셜 미리보기용으로 추정).
-- **상세 스펙**: `feature/backend` 또는 `feature/design` 취합 시 실제 파라미터 확인 필요.
+### 2.5 `GET /api/og-image` (코드 확인 완료)
+- **역할**: 행안부 표준데이터 축제 응답에 이미지 필드가 없을 때, 해당 축제의 `homepageUrl` HTML에서 `og:image`/`twitter:image`/본문 첫 `<img>`를 스크래핑해 대표 이미지를 보강하는 SSRF-safe 프록시.
+- **요청**: `GET /api/og-image?url=<encoded_url>`
+- **응답**: `{ image: string | null }` — 실패해도 항상 `200 { image: null }`(클라이언트가 무이미지로 graceful 처리, 4xx는 `url` 파라미터 누락/형식 오류 시만).
+- **보안**: http/https만 허용, localhost·사설 IP(RFC1918)·link-local 차단(SSRF 방어), 8초 타임아웃, https 실패 시 http 폴백(지자체 사이트 인증서 미배포 대응).
+- **이미지 필터링**: placeholder/로고/아이콘/svg/에러 이미지 패턴 제외, 상대경로→절대경로 정규화, http→https 강제.
+- **캐시**: `s-maxage=86400, stale-while-revalidate=604800`.
+- **근거**: `api/og-image.ts`.
 
 ## 3. 프론트 API 클라이언트 (`frontend/src/api/`)
 | 파일 | 역할 |
@@ -61,22 +66,34 @@ frontend/src/api/*.ts  →  /api/<proxy>?...  →  api/<proxy>.ts (Edge Function
 | `standardFestival.ts` | 축제 표준데이터 클라이언트 |
 | `templestay.ts` | 템플스테이 HTML 파싱 클라이언트 |
 
-## 4. 코스 생성 관련 API (미확인 — 취합 필요)
-- 코스 자동 생성 엔진(카테고리 가중치 × 거점 반경 × 숨은지역 보너스 × 동반자 가중치 × 강수 경향 → 2-opt 최적화)이 **프론트 로직인지 서버 API인지** 확인 필요.
-- 현재까지 확인된 바로는 별도 `/api/course` 류 엔드포인트가 존재하지 않음 → 프론트 단독 계산으로 추정.
-- `feature/ui-frontend`, `feature/backend` 보고서에서 확정 필요.
+## 4. 코스 생성 로직 (코드 확인 완료 — 서버 API 없음)
+- 코스 자동 생성 엔진(카테고리 가중치 × 거점 반경 × 숨은지역 보너스 × 동반자 가중치 × 강수 경향 → 2-opt 최적화)은 **`frontend/src/lib/courseEngine.ts`의 100% 프론트 로직**. 서버 API 아님.
+- `/api/course` 류 엔드포인트는 존재하지 않는다. 편집 화면의 재최적화(`reoptimizeCourse`)·재계산(`recomputeCourse`)도 전부 클라이언트에서 동기 실행.
 
-## 5. 공유/참여 플로우 (미확인 — 취합 필요)
-- `/course/shared/:payload`, `/join/:code` 라우트 존재.
-- 서버 저장(DB) 없이 payload를 URL에 인코딩하는 방식인지, 별도 저장소가 있는지 확인 필요.
+## 5. 공유/참여 플로우 (코드 확인 완료 — 두 기능은 서로 다른 메커니즘)
+
+### 5.1 공유 링크 — `/course/shared/:payload` (서버 없음)
+- `frontend/src/lib/share.ts`의 `encodeShare`/`decodeShare`.
+- 코스 JSON(장소는 `slimPlace`로 URL 크기 최적화된 최소 필드만) → UTF-8 안전 **base64url** 인코딩 → URL 파라미터에 담음.
+- 열람 시 `decodeShare`가 최소 구조(`items` 배열, `id` 문자열) 검증 후 로컬 상태(`useCourses.setCurrent`)에 반영. 변조/구버전 payload는 `share.decodeFailed` 토스트 후 홈으로 리다이렉트.
+- **읽기 전용 스냅샷** — 받는 쪽이 편집해도 원본과 동기화되지 않음.
+
+### 5.2 실시간 참여 — `/join/:code` (Supabase 백엔드)
+- `frontend/src/lib/supabase.ts` + `frontend/src/stores/collab.ts`.
+- Supabase 프로젝트에 `shared_courses` 테이블(`code`, `course` JSON, `version`, `updated_at`), **RLS로 해당 테이블만 익명 접근 허용**. 로그인 없이 코스 키(방 코드, 예: `GB-XXXXX`)로 실시간 CRUD.
+- 방 생성(`createRoom`)이 코드를 발급, 참여(`joinRoom`)는 코드로 서버 코스를 받아 로컬에 세팅 후 Supabase Realtime 채널 구독.
+- 동시 편집 충돌은 **버전 기반 Last-Write-Wins**로 처리하되, 원격 코스에 내가 모르는 장소가 있으면 `mergeCourses`로 합쳐 손실 최소화.
+- `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY` 미설정 시 `isCollabConfigured()===false` → `/join` 진입 시 `collab.unconfigured` 안내 후 홈으로 리다이렉트(앱 전체가 깨지지 않음).
+- `supabase-js`는 dynamic import — 초기 번들에 포함되지 않고 협업 기능을 실제로 켤 때만 로드.
+- **참고**: `docs/PROJECT_SPEC.md` §7의 "DB 없음" 원칙에 대한 유일한 예외. 스키마 원본은 `frontend/supabase.sql`.
 
 ## 6. 인증/보안
-- 로그인 없음(MVP 기준). 사용자 식별 없음.
-- 외부 API 키는 전부 Vercel 서버 환경변수로만 관리, 클라이언트 번들 미포함.
-- Kakao Map JS SDK 키만 브라우저에 노출되며 도메인 화이트리스트로 보호.
+- 로그인 없음(MVP 기준). 사용자 식별 없음(협업 기능도 기기별 익명 ID만 사용, `useCollab.me`).
+- 외부 공공 API 키는 전부 Vercel 서버 환경변수로만 관리, 클라이언트 번들 미포함.
+- Kakao Map JS SDK 키는 브라우저에 노출되며 도메인 화이트리스트로 보호.
+- Supabase anon key는 브라우저 노출을 전제로 설계된 공개 키이며, RLS 정책으로 `shared_courses` 테이블 외 접근을 차단(운영 시 RLS 정책 실제 적용 여부는 `feature/backend`에서 확인 필요).
 
 ## 7. 미결 사항
-- [ ] `/api/og-image` 정확한 요청/응답 스펙.
-- [ ] 코스 생성 로직 위치(프론트/백엔드) 확정.
-- [ ] 공유 링크(`/course/shared`, `/join`) 저장 방식 확정.
-- [ ] `feature/backend` 브랜치가 새 엔드포인트를 추가하는지 확인 후 본 문서에 반영.
+- [ ] `feature/backend` 브랜치가 새 프록시 엔드포인트를 추가하는지 확인 후 본 문서에 반영.
+- [ ] Supabase 운영 프로젝트의 RLS 정책이 `frontend/supabase.sql` 스키마와 실제로 일치하는지(배포 환경 기준) 확인.
+- [ ] 데이터랩·연관추천·무장애·반려동물 API 활용신청 상태(운영 키 기준) — `docs/PROJECT_SPEC.md` §8과 동일 항목.
