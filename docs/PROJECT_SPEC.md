@@ -61,12 +61,10 @@
 5. 모바일 퍼스트 — Tailwind 기본값에서 시작해 `md:`, `lg:`로 확장.
 6. 외부 API(관광공사, 기상청, Kakao, templestay)는 에러/타임아웃/빈 응답을 가정한 UI 폴백을 갖춘다. 가짜/목업 데이터는 쓰지 않는다(미신청 API는 "활용신청 안내" 상태로 노출).
 
-## 7. 브랜치 구조 및 취합 방침
-- `dev` — 통합 브랜치. **사용자는 dev만 본다.**
-- `feature/design` — 디자인/UI 비주얼 작업.
-- `feature/ui-frontend` — 프론트엔드 화면/로직 구현.
-- `feature/backend` — 백엔드(프록시/서버) 작업.
-- helper-manager(현재 세션)가 각 브랜치의 작업 결과를 `agent-reports/`에 취합하고, 충돌 가능성을 사전 식별해 `dev` 병합을 조율한다.
+## 7. 브랜치 구조 (2026-07-21부터 단순화)
+- 더 이상 `feature/backend` / `feature/ui-frontend` / `feature/design`으로 나눠 작업하지 않는다. **`dev` 하나에서 전부 작업**한다.
+- 세 브랜치는 이미 `dev`에 병합된 상태로 원격에 남아있다(이력 보존용, 더 이상 갱신하지 않음).
+- `dev`에 의미 있는 변경을 커밋할 때마다 바로 `vercel deploy --prod`까지 진행한다(사용자 요청, 2026-07-21).
 
 ## 8. 미결 사항
 - [x] Spring Boot 등 별도 서버 도입 여부 — **미도입, 도입 안 함.** 코스 서버 이전은 기존 Vercel Edge Function 체계 내에서 진행(§9 결정 기록 참고).
