@@ -102,19 +102,18 @@
   .badge-coral {
     @apply inline-flex items-center gap-1 rounded-pill bg-primary text-on-primary uppercase tracking-[0.88px] text-[11px] font-semibold px-2.5 py-1;
   }
-  /* 행사 상태 배지 — 진행/예정/종료. 모양은 .status-badge, 색은 변형 클래스. */
+  /* 행사 상태 배지 — 진행/예정/종료. 모양은 .status-badge, 색은 변형 클래스.
+     원형 점 대신 상태별 의미가 다른 아이콘을 쓰고, 모서리도 완전한 pill 대신
+     살짝 각진 rounded-md 로 — 점+pill 조합의 "AI 배지" 인상을 피한다. */
   .status-badge {
-    @apply inline-flex items-center gap-1.5 rounded-pill px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider;
+    @apply inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider;
   }
-  .status-badge--ongoing  { @apply bg-emerald-50 text-emerald-800; }
-  .status-badge--upcoming { @apply bg-primary/10 text-primary; }
-  .status-badge--ended    { @apply bg-canvas-soft text-muted; }
-  .status-dot {
-    @apply h-1.5 w-1.5 rounded-full;
+  .status-badge--ongoing  { @apply border-emerald-200 bg-emerald-50 text-emerald-800; }
+  .status-badge--upcoming { @apply border-primary/25 bg-primary/10 text-primary; }
+  .status-badge--ended    { @apply border-hairline bg-canvas-soft text-muted; }
+  .status-icon {
+    @apply h-2.5 w-2.5;
   }
-  .status-dot--ongoing  { @apply bg-emerald-500; }
-  .status-dot--upcoming { @apply bg-primary; }
-  .status-dot--ended    { @apply bg-muted-soft; }
 
   /* Timeline pills — AI 코스 생성 단계 시각화 전용 (in-product 한정) */
   .pill-thinking { @apply rounded-pill bg-timeline-thinking text-ink       uppercase tracking-[0.88px] text-[11px] font-semibold px-2.5 py-1; }
