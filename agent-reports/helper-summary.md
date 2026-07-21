@@ -9,7 +9,10 @@
 6. Vercel `frontend` 프로젝트에 연결(`vercel link`) 후 `vercel deploy --prod`로 배포 성공. 프로덕션 도메인 `https://frontend-rho-ten-40.vercel.app`에 alias 완료.
 7. 배포본 스모크 테스트: index 200, `/api/course`(빈 바디) 400(검증 로직 정상 동작), `/api/tour` 라우팅 정상(키 없어 업스트림에서 401).
 
-## 2. ⚠️ 중요 — 반드시 확인 필요: Vercel 환경변수가 전부 비어 있음
+## 2. (해결됨) Vercel 환경변수 — TOUR_API_KEY, VITE_KAKAO_MAP_KEY 등록 완료
+사용자가 키를 제공해 `TOUR_API_KEY`, `VITE_KAKAO_MAP_KEY`를 Vercel production 환경변수로 등록하고 재배포 완료. `/api/course` 실호출로 실제 장소 데이터(좌표·썸네일 포함)가 정상 반환되는 것을 확인했다(2026-07-21).
+
+### (이전 기록 — 참고용)
 `vercel env ls production` 결과 **환경변수가 하나도 설정되어 있지 않습니다.** 즉 지금 배포된 프로덕션은:
 - `TOUR_API_KEY` 없음 → 관광공사 API 전부 실패(장소 검색, 코스 생성, 축제, 인사이트 등 핵심 기능 동작 안 함).
 - `VITE_KAKAO_MAP_KEY` 없음 → 카카오 지도가 안 뜸.
