@@ -118,7 +118,7 @@ interface DurationProfile {
   /** 거점 시군구 외부 후보의 점수 곱 — 당일치기는 거의 0 */
   offBaseMult: number
 }
-const DURATION_PROFILE: Record<TripDuration, DurationProfile> = {
+export const DURATION_PROFILE: Record<TripDuration, DurationProfile> = {
   day:    { target: 4, radiusKm: 25, hardCutoffKm: 35,  legLimitKm: 30, allowLodging: false, offBaseMult: 0.15 },
   '1n2d': { target: 6, radiusKm: 50, hardCutoffKm: 70,  legLimitKm: 50, allowLodging: true,  offBaseMult: 0.45 },
   '2n3d': { target: 8, radiusKm: 80, hardCutoffKm: 110, legLimitKm: 75, allowLodging: true,  offBaseMult: 0.65 },

@@ -147,6 +147,7 @@ export default {
       addPlace: '장소 추가',
       addToCourse: '코스에 담기',
       addedToCourse: '코스에 담았어요.',
+      addedFarWarning: '코스에 담았지만 다른 장소들과 꽤 멀어요 — 이동 시간을 확인해보세요.',
       alreadyInCourse: '이미 코스에 담겨 있어요.',
       startedCourse: '이 장소로 새 코스를 시작했어요.',
       remove: '삭제',

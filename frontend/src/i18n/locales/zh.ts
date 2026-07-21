@@ -147,6 +147,7 @@ export default {
       addPlace: '添加地点',
       addToCourse: '加入路线',
       addedToCourse: '已加入你的路线。',
+      addedFarWarning: '已加入,但离其他地点较远 — 请确认所需交通时间。',
       alreadyInCourse: '已在你的路线中。',
       startedCourse: '已用该地点开始新路线。',
       remove: '删除',

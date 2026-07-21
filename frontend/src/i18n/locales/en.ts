@@ -147,6 +147,7 @@ export default {
       addPlace: 'Add place',
       addToCourse: 'Add to course',
       addedToCourse: 'Added to your course.',
+      addedFarWarning: 'Added, but it’s quite far from your other stops — check the travel time.',
       alreadyInCourse: 'Already in your course.',
       startedCourse: 'Started a new course with this place.',
       remove: 'Remove',

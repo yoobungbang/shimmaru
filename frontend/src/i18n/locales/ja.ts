@@ -147,6 +147,7 @@ export default {
       addPlace: '場所を追加',
       addToCourse: 'コースに追加',
       addedToCourse: 'コースに追加しました。',
+      addedFarWarning: '追加しましたが、他の場所からかなり離れています — 移動時間をご確認ください。',
       alreadyInCourse: 'すでにコースに入っています。',
       startedCourse: 'この場所で新しいコースを始めました。',
       remove: '削除',

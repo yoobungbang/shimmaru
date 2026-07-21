@@ -56,9 +56,11 @@ export default function Explore() {
               ? 'course.alreadyInCourse'
               : r === 'created'
                 ? 'course.startedCourse'
-                : 'course.addedToCourse',
+                : r === 'added-far'
+                  ? 'course.addedFarWarning'
+                  : 'course.addedToCourse',
           ),
-          { type: r === 'duplicate' ? 'info' : 'success' },
+          { type: r === 'duplicate' ? 'info' : r === 'added-far' ? 'info' : 'success' },
         )
       }}
     >
