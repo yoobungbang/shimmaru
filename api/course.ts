@@ -10,10 +10,10 @@
  * 아직 프론트 courseEngine.ts 와 필드 1:1 매핑, 축제 연계, 찜 가중치는 포함하지 않음
  * (docs/API_SPEC.md §4.3 미결 참고 — 프론트 전환 전 스키마 확정 필요).
  */
-import { fetchNormalizedTourPlaces, KtoApiError } from './_lib/ktoApi.ts'
-import { generateCourse } from './_lib/courseGenerator.ts'
-import type { CourseCandidate, CourseCompanion, GenerateCourseOptions } from './_lib/types/course.ts'
-import type { Coordinates, TourCategory } from './_lib/types/tour.ts'
+import { fetchNormalizedTourPlaces, KtoApiError } from './_lib/ktoApi'
+import { generateCourse } from './_lib/courseGenerator'
+import type { CourseCandidate, CourseCompanion, GenerateCourseOptions } from './_lib/types/course'
+import type { Coordinates, TourCategory } from './_lib/types/tour'
 
 export const config = { runtime: 'edge' }
 

@@ -1,2 +1,2 @@
-export type * from './tour.ts'
-export type * from './course.ts'
+export type * from './tour'
+export type * from './course'

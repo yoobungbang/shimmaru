@@ -1,4 +1,4 @@
-import type { Coordinates, NormalizedTourPlace, TourCategory } from './tour.ts'
+import type { Coordinates, NormalizedTourPlace, TourCategory } from './tour'
 
 export type CourseCompanion = 'solo' | 'friends' | 'couple' | 'kids' | 'parents' | 'pet' | 'accessible'
 

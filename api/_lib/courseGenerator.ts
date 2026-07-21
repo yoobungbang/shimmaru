@@ -4,8 +4,8 @@ import type {
   CourseDay,
   GeneratedCourse,
   GenerateCourseOptions,
-} from './types/course.ts'
-import type { Coordinates, TourCategory } from './types/tour.ts'
+} from './types/course'
+import type { Coordinates, TourCategory } from './types/tour'
 
 const EARTH_RADIUS_KM = 6371
 const BASE_CATEGORY_WEIGHT: Record<TourCategory, number> = {

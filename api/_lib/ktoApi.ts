@@ -1,10 +1,10 @@
-import { normalizeTourData } from './normalizeTourData.ts'
+import { normalizeTourData } from './normalizeTourData'
 import type {
   KtoResponse,
   KtoTourItem,
   NormalizeResult,
   TourLanguage,
-} from './types/tour.ts'
+} from './types/tour'
 
 const KTO_BASE_URL = 'https://apis.data.go.kr/B551011/'
 const ALLOWED_SERVICES = new Set([

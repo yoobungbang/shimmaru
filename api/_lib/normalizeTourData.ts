@@ -4,7 +4,7 @@ import type {
   NormalizedTourPlace,
   TourCategory,
   TourLanguage,
-} from './types/tour.ts'
+} from './types/tour'
 
 const TITLE_EXCLUSION = /글램|glamping|풀\s*빌라|캠핑|모텔|리조트|카지노/i
 
