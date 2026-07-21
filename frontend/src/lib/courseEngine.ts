@@ -871,7 +871,7 @@ function centroid(points: LatLng[]): LatLng {
   return { lat, lng }
 }
 
-function buildAutoTitle(baseSigungus: number[], profile: CourseProfile, lang: Lang): string {
+export function buildAutoTitle(baseSigungus: number[], profile: CourseProfile, lang: Lang): string {
   const names = baseSigungus
     .map((c) => findSigungu(c))
     .filter(Boolean)

@@ -7,7 +7,8 @@ import { useFavorites } from '@/stores/favorites'
 import { PROFILE_LABELS, CATEGORIES } from '@/constants/categories'
 import { SIGUNGUS, findSigungu } from '@/constants/sigungu'
 import { searchFestivals, searchPlaces, searchAccessiblePlaces, searchPetFriendlyPlaces, isoToYmd } from '@/api/tour'
-import { generateCourse } from '@/lib/courseEngine'
+import { generateCourse, buildAutoTitle } from '@/lib/courseEngine'
+import { requestServerCourse } from '@/api/course'
 import { useCourses } from '@/stores/courses'
 import CategoryBadge from '@/components/CategoryBadge'
 import Thumbnail from '@/components/Thumbnail'
@@ -45,6 +46,19 @@ const QUICK_CHIPS: { id: string; Icon: typeof HanokIcon; key: string }[] = [
 ]
 
 // AI 코스 생성 단계 — Cursor 타임라인 pill 매핑
+// 경북 도내 중심 좌표(courseEngine.ts 의 centroid 빈 폴백과 동일값) — 서버 코스 생성 origin 기본값.
+const GB_CENTER = { lat: 36.5685, lng: 128.7282 }
+
+function estimateDurationDays(duration: TripDuration, range?: DateRange): number {
+  if (range) {
+    const diff = Math.round(
+      (new Date(range.end).getTime() - new Date(range.start).getTime()) / 86_400_000,
+    ) + 1
+    if (diff > 0) return diff
+  }
+  return duration === 'day' ? 1 : duration === '2n3d' ? 3 : 2
+}
+
 const STAGES = [
   { key: 'thinking', label: 'thinking', pill: 'pill-thinking' },
   { key: 'grep',     label: 'fetching', pill: 'pill-grep' },
@@ -200,6 +214,82 @@ export default function Home() {
       const companions = input.companions ?? []
       const accessible = companions.includes('accessible')
       const petFriendly = companions.includes('pet')
+
+      // 코스 생성 완료 후 공통 마무리(협업 반영/저장/이동) — 서버 경로·클라이언트 경로가 공유.
+      const finishGeneration = (finished: Course) => {
+        if (
+          effectiveProfiles.includes('festival_link') &&
+          !finished.items.some((it) => it.place.category === 'festival')
+        ) {
+          const names = sigunguCodes
+            .map((c) => findSigungu(c))
+            .filter(Boolean)
+            .map((s) => s![lang as 'ko' | 'en' | 'ja' | 'zh'])
+            .join(' · ')
+          toast(t('home.noFestivalToast', { names: names || t('home.sticky.autoBase') }), {
+            type: 'info',
+            duration: 4500,
+          })
+        }
+        setStage(STAGES.length - 1)
+        const collab = useCollab.getState()
+        const cur = useCourses.getState().current
+        if (collab.code && cur?.collabCode === collab.code) {
+          const linked: Course = {
+            ...finished,
+            id: cur.id,
+            collabCode: collab.code,
+            contributors: cur.contributors,
+            companionsByContributor: cur.companionsByContributor,
+            items: finished.items.map((it) => ({ ...it, addedBy: it.addedBy ?? collab.me.id })),
+          }
+          setCurrent(linked)
+          saveCourse(linked)
+          collab.publish(linked)
+        } else {
+          setCurrent(finished)
+        }
+        window.setTimeout(() => nav('/course'), 250)
+      }
+
+      // 서버 코스 생성 v1(2026-07-14 결정) — 단일 시군구 + 축제연계/한적모드/찜/무장애/반려동물
+      // 미사용인 단순 케이스에서만 시도한다. 이 기능들은 아직 서버에 없어 그대로 쓰면 결과가
+      // 후퇴하기 때문 — 실패하거나 범위 밖이면 아래 기존 클라이언트 파이프라인으로 무중단 폴백.
+      const simpleServerCase =
+        !usedAuto &&
+        sigunguCodes.length === 1 &&
+        !accessible &&
+        !petFriendly &&
+        favorites.length === 0 &&
+        !effectiveProfiles.includes('festival_link') &&
+        !effectiveProfiles.includes('hidden_gb')
+      if (simpleServerCase) {
+        try {
+          const weather = await weatherP
+          const sigunguCode = sigunguCodes[0]
+          const serverCourse = await requestServerCourse(
+            {
+              sigunguCode,
+              origin: GB_CENTER,
+              durationDays: estimateDurationDays(input.duration, effRange),
+              companions: input.companions,
+              rainProbability: weather?.rainChance,
+            },
+            {
+              title: buildAutoTitle(sigunguCodes, effectiveProfiles[0] ?? 'known_gb', lang),
+              baseSigungus: sigunguCodes,
+              duration: input.duration,
+              dateRange: effRange,
+              lang,
+            },
+          )
+          finishGeneration(serverCourse)
+          return
+        } catch (err) {
+          console.warn('[generateFromInput] 서버 코스 생성 v1 실패 — 클라이언트 엔진으로 폴백', err)
+        }
+      }
+
       // 동반자에 맞는 전용 소스로 후보를 받는다 — 무장애: KorWithService2 / 반려동물: KorPetTourService.
       // 둘 다 선택 시 합집합. 전용 소스가 없으면 일반 검색.
       const sources: Array<(c: number) => Promise<{ items: Place[] }>> = []
@@ -250,41 +340,7 @@ export default function Home() {
         companions: input.companions,
         lang,
       })
-      // 축제 연계를 골랐는데 해당 지역·기간에 축제가 없어 코스에 못 넣은 경우 안내.
-      if (
-        effectiveProfiles.includes('festival_link') &&
-        !course.items.some((it) => it.place.category === 'festival')
-      ) {
-        const names = sigunguCodes
-          .map((c) => findSigungu(c))
-          .filter(Boolean)
-          .map((s) => s![lang as 'ko' | 'en' | 'ja' | 'zh'])
-          .join(' · ')
-        toast(t('home.noFestivalToast', { names: names || t('home.sticky.autoBase') }), {
-          type: 'info',
-          duration: 4500,
-        })
-      }
-      setStage(STAGES.length - 1)
-      // 협업 방이 활성화된 상태(빈 코스로 함께 시작 등)면, 생성 결과를 그 방에 채워 실시간 공유한다.
-      const collab = useCollab.getState()
-      const cur = useCourses.getState().current
-      if (collab.code && cur?.collabCode === collab.code) {
-        const linked: Course = {
-          ...course,
-          id: cur.id,
-          collabCode: collab.code,
-          contributors: cur.contributors,
-          companionsByContributor: cur.companionsByContributor,
-          items: course.items.map((it) => ({ ...it, addedBy: it.addedBy ?? collab.me.id })),
-        }
-        setCurrent(linked)
-        saveCourse(linked)
-        collab.publish(linked)
-      } else {
-        setCurrent(course)
-      }
-      window.setTimeout(() => nav('/course'), 250)
+      finishGeneration(course)
     } catch (err) {
       console.error('[generateFromInput] failed', err)
       toast(t('course.generateFailed'), { type: 'error', duration: 3500 })
