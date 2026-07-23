@@ -30,7 +30,8 @@
 
   /* ── DATA TEASER — 데이터랩 라이브 → /insights ── */
   .home-teaser { @apply px-5 md:px-10 pt-2 pb-2; }
-  .home-teaser__card { @apply flex flex-col gap-1 p-5 no-underline border-l-4 border-l-primary bg-primary/[0.04] transition-shadow hover:shadow-md md:flex-row md:items-center md:gap-4; }
+  .home-teaser__card { @apply flex flex-col gap-1 p-5 no-underline border border-hairline transition-shadow hover:shadow-md hover:border-primary/40 md:flex-row md:items-center md:gap-4; }
+  .home-teaser__icon { @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/[0.08] text-primary md:h-10 md:w-10; }
   .home-teaser__eyebrow { @apply text-primary; }
   .home-teaser__title { @apply text-body-md font-semibold text-ink break-keep md:flex-1; }
   .home-teaser__body { @apply text-body-sm text-muted break-keep; }
