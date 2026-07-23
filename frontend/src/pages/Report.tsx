@@ -10,6 +10,7 @@ import { renderReportCardBlob } from '@/lib/reportCard'
 import { loadVisitorBoost, quietRankFor } from '@/lib/visitorIndex'
 import { CATEGORY_MAP } from '@/constants/categories'
 import { SIGUNGUS } from '@/constants/sigungu'
+import { GiftIcon, CloseIcon, ExploreIcon, LeafIcon, ImageIcon } from '@/components/icons'
 import type { Lang } from '@/types/domain'
 
 /**
@@ -107,7 +108,7 @@ export default function Report() {
   if (entries.length === 0) {
     return (
       <div className="report report--empty">
-        <p className="report__empty-emoji" aria-hidden>🎁</p>
+        <p className="report__empty-emoji" aria-hidden><GiftIcon width={32} height={32} /></p>
         <h1 className="report__empty-title">{t('report.emptyTitle')}</h1>
         <p className="report__empty-body">{t('report.emptyBody')}</p>
         <Link to="/explore" className="btn-primary">{t('journal.exploreCta')} →</Link>
@@ -127,7 +128,7 @@ export default function Report() {
         ))}
       </div>
       <button type="button" className="report__close" aria-label={t('common.close')} onClick={() => nav('/journal')}>
-        ✕
+        <CloseIcon width={16} height={16} />
       </button>
 
       {/* 탭 존 — 좌 1/3 이전, 우 2/3 다음 */}
@@ -171,7 +172,9 @@ export default function Report() {
         {slide === 'taste' && (
           <>
             <p className="report__eyebrow">{t('report.tasteEyebrow')}</p>
-            <p className="report__emoji" aria-hidden>{topDef?.emoji ?? '🧭'}</p>
+            <p className="report__emoji" aria-hidden>
+              {(() => { const Icon = topDef?.icon ?? ExploreIcon; return <Icon width={28} height={28} /> })()}
+            </p>
             <h2 className="report__display">
               {topDef ? topDef.label[lang as 'ko' | 'en' | 'ja' | 'zh'] : '—'}
             </h2>
@@ -187,7 +190,7 @@ export default function Report() {
             <h2 className="report__display report__display--accent">{personaTitle}</h2>
             <p className="report__caption">{personaBody}</p>
             {report.gemVisits > 0 && (
-              <p className="report__gems">🌿 {t('journal.conquestGems', { n: report.gemVisits })}</p>
+              <p className="report__gems"><LeafIcon aria-hidden width={14} height={14} /> {t('journal.conquestGems', { n: report.gemVisits })}</p>
             )}
           </>
         )}
@@ -199,7 +202,7 @@ export default function Report() {
             <p className="report__caption">{t('report.finaleCaption')}</p>
             <div className="report__actions">
               <button type="button" className="btn-primary" onClick={() => void handleSaveCard()}>
-                🖼 {t('report.saveCard')}
+                <ImageIcon aria-hidden width={15} height={15} /> {t('report.saveCard')}
               </button>
               <Link to="/insights" className="report__link">
                 {t('journal.conquestNext')} →
