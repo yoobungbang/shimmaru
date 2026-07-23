@@ -142,7 +142,7 @@
   .journal__report-arrow {@apply text-lg text-primary;}
 
   /* ── Report — 쉼마루 Wrapped 풀스크린 스토리 ── */
-  .report {@apply fixed inset-0 z-40 flex flex-col items-center justify-center overflow-hidden px-8 text-center;background: #26251e;}
+  .report {@apply fixed inset-0 z-40 flex flex-col items-center justify-center overflow-hidden px-8 text-center;background: #201f1b;}
   .report--persona, .report--finale {background: #1c1b16;}
   .report--empty {@apply gap-4 bg-canvas;}
   .report__empty-emoji {@apply text-6xl;}
@@ -179,12 +179,12 @@
   .conquest__bar-track {@apply mt-4 h-2.5 rounded-pill bg-surface-strong/50 overflow-hidden;}
   .conquest__bar-fill {
     @apply block h-full rounded-pill;
-    background: #f54e00;
+    background: #8f3b32;
   }
   .conquest__map {@apply mt-5;}
   .conquest__svg {@apply block w-full max-w-sm mx-auto;}
   .conquest__stamp {
-    fill: #f54e00;
+    fill: #8f3b32;
     fill-opacity: 0.92;
     stroke: #ffffff;
     stroke-width: 3;
@@ -224,12 +224,12 @@
   .insights-map__skeleton {@apply mt-6 aspect-[0.79/1] w-full max-w-xl mx-auto rounded-xl;}
   .insights-map__bubble {@apply cursor-pointer transition-opacity;}
   .insights-map__bubble--selected {
-    stroke: #26251e;
+    stroke: #201f1b;
     stroke-width: 3;
   }
   .insights-map__gem-ring {
     fill: none;
-    stroke: #f54e00;
+    stroke: #8f3b32;
     stroke-width: 2.5;
     stroke-dasharray: 5 5;
   }
@@ -267,7 +267,7 @@
     background: #a09c92;
   }
   .insights-rank__bar--gem {
-    background: #f54e00;
+    background: #8f3b32;
   }
   .insights-rank__value {@apply font-mono text-caption text-muted text-right min-w-[3.2rem];}
 
