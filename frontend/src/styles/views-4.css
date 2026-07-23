@@ -135,7 +135,7 @@
   .insights__notice-body {@apply mt-2 text-body-sm text-body break-keep;}
 
   /* ── Journal — Wrapped 리포트 CTA ── */
-  .journal__report-cta {@apply mb-6 flex items-center gap-3 p-4 no-underline text-2xl transition-shadow hover:shadow-md border-l-4 border-l-primary;}
+  .journal__report-cta {@apply mb-6 flex items-center gap-3 p-4 no-underline text-2xl transition-shadow hover:shadow-md border border-hairline hover:border-primary/40;}
   .journal__report-text {@apply flex min-w-0 flex-1 flex-col gap-0.5;}
   .journal__report-text strong {@apply text-body-md font-semibold text-ink;}
   .journal__report-text em {@apply not-italic text-caption text-muted;}
