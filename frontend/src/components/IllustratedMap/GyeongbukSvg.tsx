@@ -46,7 +46,7 @@ export default function GyeongbukSvg({ variant = 'illustrated' }: GyeongbukSvgPr
         <path
           d={MAINLAND_OUTLINE}
           fill="#f1efe9"
-          stroke="#cfcdc4"
+          stroke="#d6cdbc"
           strokeWidth="2"
           strokeLinejoin="round"
         />
