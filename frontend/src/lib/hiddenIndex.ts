@@ -21,7 +21,15 @@ export interface QuietRegion {
   rank: number
 }
 
-function scoreByMetric(rows: { sigunguCode: number; metric: number }[]): QuietRegion[] {
+/**
+ * 울릉군(code 17) — 섬. 인구밀도가 낮아 한적지수 상위에 오르지만, 코스 엔진은 직선거리로
+ * 동선을 짜고 배편을 모델링하지 않아 본토 시·군과 한 코스로 묶으면 바다 횡단 동선이 된다.
+ * 숨은 코스 후보/리스트에서 제외한다. (정복지도·일러스트 지도도 code 17 을 별도 처리)
+ */
+const ISLAND_CODE = 17
+
+function scoreByMetric(input: { sigunguCode: number; metric: number }[]): QuietRegion[] {
+  const rows = input.filter((r) => r.sigunguCode !== ISLAND_CODE)
   if (rows.length === 0) return []
   const logs = rows.map((r) => Math.log(Math.max(1, r.metric)))
   const min = Math.min(...logs)
