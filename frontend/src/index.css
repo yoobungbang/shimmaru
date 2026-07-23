@@ -32,12 +32,12 @@
   }
   /* 텍스트 선택 — 브랜드 오렌지 틴트. */
   ::selection {
-    background: rgba(245, 78, 0, 0.16);
+    background: rgba(143, 59, 50, 0.16);
   }
   /* 스크롤바 — 크림 캔버스에 맞는 가는 warm 톤 (오버플로우 컨테이너 공통). */
   * {
     scrollbar-width: thin;
-    scrollbar-color: #cfcdc4 transparent;
+    scrollbar-color: #b9ae9d transparent;
   }
   *::-webkit-scrollbar {
     width: 8px;
@@ -45,7 +45,7 @@
   }
   *::-webkit-scrollbar-thumb {
     border-radius: 9999px;
-    background: #cfcdc4;
+    background: #b9ae9d;
   }
   *::-webkit-scrollbar-track {
     background: transparent;
@@ -78,6 +78,8 @@
   h2 { @apply text-display-lg; }
   h3 { @apply text-display-md; }
   h4 { @apply text-display-sm; }
+  /* MaruBuri 명조 제목 — SemiBold(600) + 절제된 자간. 붓 획 겹침/과한 부정자간 방지. */
+  h1, h2, h3, h4 { font-weight: 600; letter-spacing: -0.01em; }
   code, pre, kbd {
     @apply font-mono;
   }
@@ -100,7 +102,7 @@
  * pointer 클릭(:focus-visible 미충족)에는 표시되지 않아 디자인을 해치지 않는다.
  * ───────────────────────────────────────────────────────────── */
 :where(a, button, input, select, textarea, [role='button']):focus-visible {
-  outline: 2px solid #26251e;
+  outline: 2px solid #201f1b;
   outline-offset: 2px;
   border-radius: 6px;
 }

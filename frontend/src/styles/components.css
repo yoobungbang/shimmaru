@@ -140,7 +140,7 @@
     @apply w-full rounded-md bg-card text-ink text-sm h-11 px-4 border border-hairline placeholder:text-muted-soft focus:outline-none focus:border-primary transition-colors;
   }
   .input:focus-visible {
-    box-shadow: 0 0 0 3px rgba(245, 78, 0, 0.15);
+    box-shadow: 0 0 0 3px rgba(143, 59, 50, 0.15);
   }
 
   /* ─── Editorial section labels ──────────────────────────────────── */

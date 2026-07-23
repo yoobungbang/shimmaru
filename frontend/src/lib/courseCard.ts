@@ -19,15 +19,15 @@ const PAD = 76
 
 // 브랜드 토큰 (tailwind.config 와 동일 값) — reportCard 등 다른 캔버스 렌더러와 공유.
 export const C = {
-  canvas: '#f7f7f4',
-  card: '#ffffff',
-  ink: '#26251e',
-  body: '#5a5852',
-  muted: '#807d72',
-  mutedSoft: '#a09c92',
-  hairline: '#e6e5e0',
-  primary: '#f54e00',
-  primarySoft: '#fde8dd',
+  canvas: '#f5f1e8',
+  card: '#fcfaf5',
+  ink: '#201f1b',
+  body: '#504c44',
+  muted: '#777168',
+  mutedSoft: '#9b958b',
+  hairline: '#d8d0c2',
+  primary: '#8f3b32',
+  primarySoft: '#efe0da',
   emerald: '#0f8a5f',
   sky: '#2a78d6',
 } as const

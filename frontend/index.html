@@ -6,7 +6,7 @@
     <link rel="apple-touch-icon" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#f7f7f4" />
+    <meta name="theme-color" content="#f5f1e8" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="Shimmaru" />
@@ -29,8 +29,8 @@
     <meta name="twitter:image" content="/og-cover.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- 폰트 통일: 본문/디스플레이 모두 Pretendard Variable 단일 패밀리(라틴 포함).
-         JetBrains Mono 는 eyebrow/날짜/코드 등 모노 악센트 전용. -->
+    <link rel="preconnect" href="https://hangeul.pstatic.net" crossorigin />
+    <!-- 본문·UI: Pretendard(한글). 디스플레이(큰 제목·장소명): MaruBuri(마루부리, 네이버 명조). JetBrains Mono: 모노 악센트. -->
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
@@ -39,6 +39,33 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css"
     />
+    <style>
+      /* MaruBuri (마루부리) — 네이버 한글 명조. 디스플레이 전용. */
+      @font-face {
+        font-family: 'MaruBuri';
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+        src: url('https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff2') format('woff2'),
+             url('https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff') format('woff');
+      }
+      @font-face {
+        font-family: 'MaruBuri';
+        font-weight: 600;
+        font-style: normal;
+        font-display: swap;
+        src: url('https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-SemiBold.woff2') format('woff2'),
+             url('https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-SemiBold.woff') format('woff');
+      }
+      @font-face {
+        font-family: 'MaruBuri';
+        font-weight: 700;
+        font-style: normal;
+        font-display: swap;
+        src: url('https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Bold.woff2') format('woff2'),
+             url('https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Bold.woff') format('woff');
+      }
+    </style>
     <title>쉼(休)마루 · 경상북도 전통문화 여행</title>
   </head>
   <body>

@@ -4,48 +4,52 @@ export default {
   theme: {
     extend: {
       colors: {
-        // ─── Surface — warm cream canvas (Cursor 시스템) ───────────────
-        canvas: '#f7f7f4',              // 페이지 floor — 따뜻한 크림
-        'canvas-soft': '#fafaf7',       // IDE-pane 등 한 단계 옅은 면
-        // surface-card: 순백. cream canvas 위에서 살짝 들리는 카드.
-        card: '#ffffff',
-        'surface-strong': '#e6e5e0',    // 배지/태그 pill
-        'surface-cream-strong': '#e6e5e0',
+        // ─── Surface — 한지(韓紙) 크림 ────────────────────────────
+        canvas: '#f5f1e8',              // 페이지 floor — 따뜻한 한지 베이지
+        'canvas-soft': '#eee8dc',       // 섹션 밴드, 한 단계 짙은 한지
+        // card: 한지 위에 살짝 들리는 밝은 장지.
+        card: '#fcfaf5',
+        'surface-strong': '#ded5c5',    // 배지/태그 pill
+        'surface-cream-strong': '#ded5c5',
 
         // ─── Hairlines (그림자 없이 깊이감) ─────────────────────────
-        hairline: '#e6e5e0',
-        'hairline-soft': '#efeee8',
-        'hairline-strong': '#cfcdc4',
+        hairline: '#d8d0c2',
+        'hairline-soft': '#e9e3d9',
+        'hairline-strong': '#b9ae9d',
 
-        // ─── Text ────────────────────────────────────────────────
-        ink: '#26251e',                 // 본문/제목 — warm near-black
-        body: '#5a5852',
-        'body-strong': '#26251e',
-        muted: '#807d72',
-        'muted-soft': '#a09c92',
+        // ─── Text — 먹(墨) ───────────────────────────────────────
+        ink: '#201f1b',                 // 본문/제목 — 먹빛 near-black
+        body: '#504c44',
+        'body-strong': '#34322d',
+        muted: '#777168',
+        'muted-soft': '#9b958b',
 
-        // ─── Brand voltage — Cursor Orange ──────────────────────────
-        // 시그니처 voltage. primary CTA / wordmark 에만 희소하게.
+        // ─── Brand voltage — 단청 벽돌빛 적갈(丹靑) ──────────────────
+        // 시그니처. 핵심 CTA / 선택 상태 / 브랜드 표식에만 희소하게(화면 10% 이하).
         primary: {
-          DEFAULT: '#f54e00',
-          active: '#d04200',
-          disabled: '#e6e5e0',
+          DEFAULT: '#8f3b32',
+          active: '#6f2c26',
+          disabled: '#ded5c5',
         },
-        'on-primary': '#ffffff',
+        'on-primary': '#fffcf6',
+
+        // ─── Accent — 단청 청록/황토 (카테고리·보조 강조 한정) ─────────
+        'accent-teal': '#2f625b',
+        'accent-amber': '#a8782e',
 
         // ─── Timeline pastel pills (in-product AI 단계 전용) ────────
-        // 시스템 액션 색으로 쓰지 말 것 — agent timeline 시각화 한정.
         timeline: {
-          thinking: '#dfa88f',      // peach
-          grep: '#9fc9a2',          // mint
-          read: '#9fbbe0',          // pastel blue
-          edit: '#c0a8dd',          // lavender
-          done: '#c08532',          // warm gold
+          thinking: '#d6a58a',
+          grep: '#8fbf92',
+          read: '#8fb0cf',
+          edit: '#b39ac9',
+          done: '#8f3b32',          // 단청 적갈로 정렬
         },
 
         // ─── Semantic ────────────────────────────────────────────
-        success: '#1f8a65',
-        error: '#cf2d56',
+        success: '#386a50',
+        warning: '#a56b23',
+        error: '#a33f35',
       },
       fontFamily: {
         // 폰트 통일 — Pretendard Variable 단일 패밀리 (한글+라틴 모두 커버.
@@ -59,15 +63,13 @@ export default {
           'sans-serif',
         ],
         mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
-        // Display — sans 와 동일 스택 (의미적 토큰만 분리 유지).
-        // 사용 규칙: weight 400 고정 + 부정 자간. 절대 bold 로 올리지 말 것.
+        // Display — MaruBuri(마루부리, 네이버 명조). 정제된 전통 명조로
+        // 히어로·페이지 제목·장소명 등 큰 제목에만. 붓글씨는 쓰지 않음.
         display: [
-          'Pretendard Variable',
-          'Pretendard',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'system-ui',
-          'sans-serif',
+          'MaruBuri',
+          'Nanum Myeongjo',
+          'Batang',
+          'serif',
         ],
       },
       fontSize: {
@@ -134,9 +136,9 @@ export default {
         },
         // Builder 강조 — NL 적용 직후 살짝 펄스 (Cursor Orange)
         highlight: {
-          '0%':   { boxShadow: '0 0 0 0 rgba(245, 78, 0, 0.45)' },
-          '70%':  { boxShadow: '0 0 0 10px rgba(245, 78, 0, 0)' },
-          '100%': { boxShadow: '0 0 0 0 rgba(245, 78, 0, 0)' },
+          '0%':   { boxShadow: '0 0 0 0 rgba(143, 59, 50, 0.45)' },
+          '70%':  { boxShadow: '0 0 0 10px rgba(143, 59, 50, 0)' },
+          '100%': { boxShadow: '0 0 0 0 rgba(143, 59, 50, 0)' },
         },
       },
       animation: {
