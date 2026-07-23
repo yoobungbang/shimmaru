@@ -156,12 +156,34 @@ export interface Festival extends Place {
   eventEndDate: string
 }
 
+/**
+ * 코스 추천 근거 — 엔진이 점수화하며 함께 산출해 CourseResult 의 근거 칩에 노출한다.
+ * "왜 이 장소가 추천됐는가"를 사용자에게 설명해 신뢰도를 높이는 용도(설명가능성).
+ *  - favorite:      찜한 장소
+ *  - festival_now:  여행 기간에 열리는 축제
+ *  - rain_indoor:   비 예보 → 실내(체험·한옥·시장·사찰·서원) 우선
+ *  - quiet_gem:     데이터랩/정적 지표상 한적한 숨은 시군
+ *  - companion_fit: 선택한 동반자 유형에 잘 맞는 카테고리
+ *  - accessible:    무장애 여행 정보 있음
+ *  - pet_ok:        반려동물 동반 가능
+ */
+export type CourseReason =
+  | 'favorite'
+  | 'festival_now'
+  | 'rain_indoor'
+  | 'quiet_gem'
+  | 'companion_fit'
+  | 'accessible'
+  | 'pet_ok'
+
 export interface CourseItem {
   place: Place
   /** 방문 순서(1-based) */
   order: number
   /** 직전 장소로부터의 직선 거리(km). 첫 장소는 거점(baseCenter)으로부터의 거리 */
   distanceFromPrevKm: number
+  /** 추천 근거 — 엔진이 점수화하며 산출. 근거 칩 노출용(최대 2개 권장). 협업 추가 장소는 없음. */
+  reasons?: CourseReason[]
   /** 협업 — 이 장소를 추가한 기여자 id(CollabContributor.id). 여행 릴레이 태그에 사용. */
   addedBy?: string
   /** 협업 — 이 장소에 하트를 누른 기여자 id 목록. 투표/하트 합산에 사용. */

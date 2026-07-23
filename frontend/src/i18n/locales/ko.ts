@@ -175,6 +175,16 @@ export default {
         balanced: '균형형',
         busy: '활동형',
       },
+      why: {
+        label: '추천 이유',
+        favorite: '찜한 곳',
+        festival_now: '기간 중 축제',
+        rain_indoor: '비 예보·실내',
+        quiet_gem: '한적한 숨은 곳',
+        companion_fit: '동반자 맞춤',
+        accessible: '무장애 정보',
+        pet_ok: '반려동물 동반',
+      },
     },
     explore: {
       title: '카테고리 탐색',

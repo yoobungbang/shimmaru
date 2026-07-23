@@ -12,6 +12,8 @@ vi.mock('@/api/tour', () => ({
 }))
 vi.mock('@/lib/visitorIndex', () => ({
   visitorBoostFor: () => undefined,
+  // 미로드 상태 — 추천 근거(quiet_gem)는 정적 hiddenBoost 폴백 경로로 판정.
+  quietRankFor: () => undefined,
 }))
 
 import {

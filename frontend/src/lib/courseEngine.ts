@@ -1,6 +1,6 @@
 import { PROFILE_WEIGHTS, type ProfileWeights } from '@/constants/categories'
 import { findSigungu } from '@/constants/sigungu'
-import { visitorBoostFor } from '@/lib/visitorIndex'
+import { visitorBoostFor, quietRankFor } from '@/lib/visitorIndex'
 import { isoToYmd } from '@/api/tour'
 import { estimateMinutes, haversineKm } from '@/lib/geo'
 import type { RainHint } from '@/api/weather'
@@ -11,6 +11,7 @@ import type {
   Course,
   CourseItem,
   CourseProfile,
+  CourseReason,
   DateRange,
   Festival,
   LatLng,
@@ -126,6 +127,22 @@ const DURATION_PROFILE: Record<TripDuration, DurationProfile> = {
 }
 
 /**
+ * 여행 기간별 식사(맛집) 슬롯 수 — 코스에 향토음식·맛집이 최소한 한 곳은 들어가도록 보장한다.
+ * 이전엔 restaurant 쿼터가 항상 0이라 끼니가 우연에 맡겨졌다(점수순 보충에만 의존). 현지 식사는
+ * 여행 코스의 핵심 경험이므로 하루 흐름에 한 끼 정도를 명시 슬롯으로 예약한다.
+ * 후보 풀에 맛집이 없으면 조용히 미충족(빈 코스보다 다른 카테고리로 보충) — graceful.
+ */
+const MEAL_SLOTS: Record<TripDuration, number> = {
+  day: 1,
+  '1n2d': 1,
+  '2n3d': 2,
+  custom: 1,
+}
+
+/** 비 오는 날 실내로 간주하는 카테고리 — 근거 칩(rain_indoor) 판정에 사용. */
+const INDOOR_CATEGORIES = new Set<CategoryId>(['experience', 'hanok', 'market', 'temple', 'seowon'])
+
+/**
  * FR-03·04·16·17·18·21 — 코스 자동 생성 진입점.
  *
  * 절차:
@@ -211,7 +228,7 @@ export function generateCourse(opts: GenerateOptions): Course {
 
   // 2) 카테고리 다양성 — 슬롯 채우기
   const desired = durProfile.target
-  const quotas = buildQuotasMulti(activeProfiles.length > 0 ? activeProfiles : [primaryProfile], desired, durProfile.allowLodging, hasFestivalLink)
+  const quotas = buildQuotasMulti(activeProfiles.length > 0 ? activeProfiles : [primaryProfile], desired, durProfile.allowLodging, hasFestivalLink, MEAL_SLOTS[duration])
   // 동반자 시그니처 카테고리 슬롯 보장 — 점수 가중만으로는 quota 에 막혀 못 들어오는 걸 보완.
   applyCompanionQuotas(quotas, companions)
   const picked: Place[] = []
@@ -267,11 +284,19 @@ export function generateCourse(opts: GenerateOptions): Course {
   //      교체하거나(같은 카테고리 우선) 대체가 없으면 뺀다.
   ordered = enforceLegLimit(ordered, baseCenter, durProfile.legLimitKm, scored, usedIds, baseSigungus)
 
-  // 4) 거리 계산
+  // 4) 거리 계산 + 추천 근거 산출 — 점수에 반영된 신호(찜·비·한적·동반자·무장애·반려)를
+  //    사용자에게 설명 가능한 근거 칩으로 노출한다.
+  const reasonCtx: ReasonCtx = { favoriteIds, rainHint, companions, accessibleMode, petMode }
   const items: CourseItem[] = ordered.map((p, i) => {
     const prev = i === 0 ? baseCenter : ordered[i - 1].position
     const d = haversineKm(prev, p.position)
-    return { place: p, order: i + 1, distanceFromPrevKm: round1(d) }
+    const reasons = reasonsFor(p, reasonCtx)
+    return {
+      place: p,
+      order: i + 1,
+      distanceFromPrevKm: round1(d),
+      ...(reasons.length > 0 ? { reasons } : {}),
+    }
   })
   const totalKm = round1(items.reduce((a, it) => a + it.distanceFromPrevKm, 0))
 
@@ -425,6 +450,48 @@ export function blendCompanions(course: Course): Companion[] {
 
 // ─── helpers ───────────────────────────────────────────────────────────────
 
+interface ReasonCtx {
+  favoriteIds: Set<string>
+  rainHint?: RainHint
+  companions: Companion[]
+  accessibleMode: boolean
+  petMode: boolean
+}
+
+/**
+ * 장소별 추천 근거 산출 — 점수에 실제로 기여한 신호를 사람이 읽을 수 있는 라벨로 환원한다.
+ * 우선순위 순으로 담고 과잉 노출을 막기 위해 최대 2개만 반환한다. 근거가 없으면 빈 배열.
+ */
+function reasonsFor(p: Place, ctx: ReasonCtx): CourseReason[] {
+  const out: CourseReason[] = []
+  if (ctx.favoriteIds.has(p.id)) out.push('favorite')
+  if (p.category === 'festival') out.push('festival_now')
+  if (ctx.rainHint === 'rain-likely' && INDOOR_CATEGORIES.has(p.category)) out.push('rain_indoor')
+  if (isQuietGem(p)) out.push('quiet_gem')
+  if (ctx.companions.length > 0 && companionFits(p.category, ctx.companions)) out.push('companion_fit')
+  if (ctx.accessibleMode && (p.accessibility?.wheelchair || p.accessibility?.tour)) out.push('accessible')
+  if (ctx.petMode && p.accessibility?.pet) out.push('pet_ok')
+  return out.slice(0, 2)
+}
+
+/** 데이터랩 한적 상위 3(라이브) 또는 정적 hiddenBoost 상위 시군인지 — quiet_gem 근거 판정. */
+function isQuietGem(p: Place): boolean {
+  if (!p.sigunguCode) return false
+  const q = quietRankFor(p.sigunguCode)
+  if (q) return q.rank <= 3
+  const sg = findSigungu(p.sigunguCode)
+  return !!sg && sg.hiddenBoost >= 0.6
+}
+
+/** 선택한 동반자 중 하나라도 이 카테고리를 가점(>1)하면 '동반자 맞춤' 근거. */
+function companionFits(cat: CategoryId, companions: Companion[]): boolean {
+  for (const c of companions) {
+    const m = COMPANION_MULT[c]?.[cat]
+    if (m !== undefined && m > 1) return true
+  }
+  return false
+}
+
 function scoreOf(
   p: Place,
   w: ProfileWeights,
@@ -556,6 +623,7 @@ function buildQuotasMulti(
   total: number,
   allowLodging: boolean,
   hasFestivalLink: boolean,
+  mealSlots: number,
 ): Record<CategoryId, number> {
   const merged: Record<CategoryId, number> = {
     hanok: 0, templestay: 0, seowon: 0, temple: 0, experience: 0,
@@ -569,6 +637,9 @@ function buildQuotasMulti(
   }
   // 축제 자리는 hasFestivalLink 일 때만 1 (엔진에서 따로 강제 push 함). quota 에 명시할 필요 없음.
   merged.festival = 0
+  // 식사(맛집) 슬롯 — 기간별로 최소 한 끼를 예약. total 이 아주 작지 않은 한 캡 트림 대상에서 제외해
+  // 지역 식사 경험이 항상 코스에 남도록 한다. (트림 order 에 restaurant 를 넣지 않아 자동 보호)
+  merged.restaurant = Math.min(mealSlots, Math.max(0, total - 1))
   // 슬롯 캡 — total 을 넘으면 점진적으로 줄이기 (attraction 부터 깎고, 그래도 넘으면 trail/experience 순)
   let sum = Object.values(merged).reduce((a, b) => a + b, 0)
   const order: CategoryId[] = ['attraction', 'trail', 'experience', 'market', 'temple', 'seowon']

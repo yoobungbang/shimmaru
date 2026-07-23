@@ -175,6 +175,16 @@ export default {
         balanced: 'Balanced',
         busy: 'Active',
       },
+      why: {
+        label: 'Why here',
+        favorite: 'Saved',
+        festival_now: 'Festival on now',
+        rain_indoor: 'Rain · indoor',
+        quiet_gem: 'Quiet gem',
+        companion_fit: 'Fits your group',
+        accessible: 'Barrier-free info',
+        pet_ok: 'Pet-friendly',
+      },
     },
     explore: {
       title: 'Explore by category',

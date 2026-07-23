@@ -175,6 +175,16 @@ export default {
         balanced: 'バランス型',
         busy: 'アクティブ型',
       },
+      why: {
+        label: 'おすすめ理由',
+        favorite: 'お気に入り',
+        festival_now: '期間中の祭り',
+        rain_indoor: '雨予報・屋内',
+        quiet_gem: '静かな穴場',
+        companion_fit: '同行者に最適',
+        accessible: 'バリアフリー情報',
+        pet_ok: 'ペット同伴可',
+      },
     },
     explore: {
       title: 'カテゴリで探す',

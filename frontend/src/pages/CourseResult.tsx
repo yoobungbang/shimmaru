@@ -416,6 +416,7 @@ export default function CourseResult() {
                               item={it}
                               index={idx}
                               lang={lang}
+                              reasons={it.reasons}
                               collab={Boolean(course.collabCode)}
                               voted={(it.votes ?? []).includes(meId)}
                               voteCount={(it.votes ?? []).length}
@@ -522,6 +523,7 @@ function SortableRow({
   item,
   index,
   lang,
+  reasons,
   collab,
   voted,
   voteCount,
@@ -533,6 +535,7 @@ function SortableRow({
   item: CourseItem
   index: number
   lang: 'ko' | 'en' | 'ja' | 'zh'
+  reasons?: import('@/types/domain').CourseReason[]
   collab: boolean
   voted: boolean
   voteCount: number
@@ -575,6 +578,15 @@ function SortableRow({
           )}
         </span>
         <span className="cr-row__name">{item.place.name}</span>
+        {reasons && reasons.length > 0 && (
+          <span className="cr-row__reasons" aria-label={t('course.why.label')}>
+            {reasons.map((r) => (
+              <span key={r} className="why-chip">
+                {t(`course.why.${r}`)}
+              </span>
+            ))}
+          </span>
+        )}
         {index > 1 && (
           <span className="cr-row__meta">
             +{item.distanceFromPrevKm}{t('course.km')}

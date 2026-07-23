@@ -175,6 +175,16 @@ export default {
         balanced: '均衡型',
         busy: '活动型',
       },
+      why: {
+        label: '推荐理由',
+        favorite: '已收藏',
+        festival_now: '期间庆典',
+        rain_indoor: '雨天·室内',
+        quiet_gem: '静谧秘境',
+        companion_fit: '契合同伴',
+        accessible: '无障碍信息',
+        pet_ok: '可携宠物',
+      },
     },
     explore: {
       title: '分类探索',
