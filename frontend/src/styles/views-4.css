@@ -179,12 +179,12 @@
   .conquest__bar-track {@apply mt-4 h-2.5 rounded-pill bg-surface-strong/50 overflow-hidden;}
   .conquest__bar-fill {
     @apply block h-full rounded-pill;
-    background: #f54e00;
+    background: #b23a2b;
   }
   .conquest__map {@apply mt-5;}
   .conquest__svg {@apply block w-full max-w-sm mx-auto;}
   .conquest__stamp {
-    fill: #f54e00;
+    fill: #b23a2b;
     fill-opacity: 0.92;
     stroke: #ffffff;
     stroke-width: 3;
@@ -229,7 +229,7 @@
   }
   .insights-map__gem-ring {
     fill: none;
-    stroke: #f54e00;
+    stroke: #bd8f2c;
     stroke-width: 2.5;
     stroke-dasharray: 5 5;
   }
@@ -267,7 +267,7 @@
     background: #a09c92;
   }
   .insights-rank__bar--gem {
-    background: #f54e00;
+    background: #bd8f2c;
   }
   .insights-rank__value {@apply font-mono text-caption text-muted text-right min-w-[3.2rem];}
 

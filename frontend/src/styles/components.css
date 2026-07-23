@@ -141,7 +141,7 @@
     @apply w-full rounded-md bg-card text-ink text-sm h-11 px-4 border border-hairline placeholder:text-muted-soft focus:outline-none focus:border-primary transition-colors;
   }
   .input:focus-visible {
-    box-shadow: 0 0 0 3px rgba(245, 78, 0, 0.15);
+    box-shadow: 0 0 0 3px rgba(178, 58, 43, 0.15);
   }
 
   /* ─── Editorial section labels ──────────────────────────────────── */
@@ -153,8 +153,9 @@
   }
 
   /* ─── Page shells (모든 페이지 공통 레이아웃) ─────────────────── */
+  /* 투명 — 아래 app-shell 의 한지 결이 그대로 비치도록. (예전엔 bg-canvas 로 결을 덮었다) */
   .page {
-    @apply bg-canvas;
+    @apply bg-transparent;
   }
   /* 일반 컨텐츠 페이지 본문 패딩 — 앱 전역 표준. */
   .page-body {

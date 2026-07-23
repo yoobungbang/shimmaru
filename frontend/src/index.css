@@ -30,14 +30,14 @@
     /* 영문 긴 단어·URL 이 컨테이너 밖으로 흐르지 않게 — 최소한의 안전망. */
     overflow-wrap: break-word;
   }
-  /* 텍스트 선택 — 브랜드 오렌지 틴트. */
+  /* 텍스트 선택 — 단청 주홍 틴트. */
   ::selection {
-    background: rgba(245, 78, 0, 0.16);
+    background: rgba(178, 58, 43, 0.16);
   }
-  /* 스크롤바 — 크림 캔버스에 맞는 가는 warm 톤 (오버플로우 컨테이너 공통). */
+  /* 스크롤바 — 한지 캔버스에 맞는 가는 warm 톤 (오버플로우 컨테이너 공통). */
   * {
     scrollbar-width: thin;
-    scrollbar-color: #cfcdc4 transparent;
+    scrollbar-color: #c3b58f transparent;
   }
   *::-webkit-scrollbar {
     width: 8px;
@@ -45,7 +45,7 @@
   }
   *::-webkit-scrollbar-thumb {
     border-radius: 9999px;
-    background: #cfcdc4;
+    background: #c3b58f;
   }
   *::-webkit-scrollbar-track {
     background: transparent;

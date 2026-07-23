@@ -1,7 +1,14 @@
 /* BEM 컴포넌트 파셜 1 — AppShell, TopBar, OnboardingTour, OfflineBanner, LangSwitch, ToastHost, ConfirmHost, RouteError, ErrorRetry, Skeleton, Thumbnail, ScrollFade. */
 @layer components {
   /* ───────── AppShell ───────── */
-  .app-shell { @apply min-h-screen bg-canvas flex flex-col; }
+  /* 한지 결 — 프랙탈 노이즈를 아주 옅게(4.5%) 얹어 종이 질감을 준다. 카드(미색)는 그 위에 얹혀
+     깨끗하게 뜬다. background-attachment:fixed 로 스크롤해도 한 장의 한지처럼 이어진다. */
+  .app-shell {
+    @apply min-h-screen flex flex-col;
+    background-color: theme('colors.canvas');
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23p)' opacity='0.045'/%3E%3C/svg%3E");
+    background-attachment: fixed;
+  }
   .app-shell__header { @apply sticky top-0 z-30 border-b border-hairline bg-canvas/90 backdrop-blur-md; }
   .app-shell__bar { @apply mx-auto flex h-16 w-full max-w-content items-center gap-6 px-4 md:h-20 md:px-10; }
   .app-shell__wordmark { @apply flex items-baseline gap-1.5; }
