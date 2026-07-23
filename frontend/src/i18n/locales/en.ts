@@ -206,6 +206,16 @@ export default {
       subtitle: 'Six hand-picked courses through the grain of Gyeongbuk. Tap a card and we build it for you.',
       apply: 'Make this course',
     },
+    hidden: {
+      eyebrow: 'Powered by KTO DataLab',
+      title: 'Hidden Gyeongbuk',
+      subtitle: 'We use visitor data to pick the least-crowded counties of Gyeongbuk, then string them into a heritage course.',
+      quietIndex: 'Quiet index',
+      sourceLive: 'KTO DataLab · external-visitor stats ({{ym}})',
+      sourceStatic: 'Population-density proxy · awaiting live visitor data',
+      why: 'Fewer visitors means a higher quiet index. Instead of the usual hotspots, we surface the calm counties the data confirms.',
+      cta: 'Build a hidden course from these areas',
+    },
     festivals: {
       title: 'Gyeongbuk Festivals',
       thisWeek: 'This week',

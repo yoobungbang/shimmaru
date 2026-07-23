@@ -15,6 +15,7 @@ import OnboardingTour from '@/components/OnboardingTour'
 import SmartHints from '@/components/SmartHints'
 import TripChatbot, { type ChatbotResult } from '@/components/TripChatbot'
 import CollabStart from '@/components/CollabStart'
+import HiddenCourse from '@/components/HiddenCourse'
 import { useCollab } from '@/stores/collab'
 import { CURATED_COURSES, type CuratedCourse } from '@/constants/curatedCourses'
 import { fetchRainChance } from '@/api/weather'
@@ -312,6 +313,18 @@ export default function Home() {
     if (c) void generateFromCurated(c)
   }
 
+  /** 숨은 경북 코스 — 한적지수 상위 시·군(최대 3곳)으로 hidden_gb 프로필 코스 생성 */
+  function generateHidden(codes: number[]) {
+    if (generating || codes.length === 0) return
+    toast(t('home.curatedAppliedToast', { title: t('hidden.title') }), { type: 'success' })
+    void generateFromInput({
+      sigunguCodes: codes.slice(0, 3),
+      range: rangeFromDuration('2n3d'),
+      profiles: ['hidden_gb'],
+      duration: '2n3d',
+    })
+  }
+
   /** 챗봇 완료 — 봇이 모은 값으로 한 줄 입력과 동일한 코스 엔진 호출 */
   async function generateFromChatbot(r: ChatbotResult) {
     const range = r.dateRange ?? rangeFromDuration(r.duration)
@@ -398,6 +411,9 @@ export default function Home() {
         </div>
 
       </section>
+
+      {/* ═══════ 숨은 경북 코스 — 한적지수(관광공사 DataLab) 데이터 근거 + 즉시 생성 ═══════ */}
+      <HiddenCourse lang={lang} generating={generating} onGenerate={generateHidden} />
 
       {/* ═══════ DATA TEASER — 데이터랩 라이브 티저 → /insights ═══════ */}
       <DataTeaser lang={lang} />

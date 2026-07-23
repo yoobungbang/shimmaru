@@ -206,6 +206,16 @@ export default {
       subtitle: '将庆北的纹理串成一条流的六条精选路线。点击卡片即为你生成该路线。',
       apply: '生成此路线',
     },
+    hidden: {
+      eyebrow: '基于韩国观光公社 DataLab',
+      title: '静谧庆北路线',
+      subtitle: '用数据挑出外来访客较少、不拥挤的庆北市·郡，串成传统文化路线。',
+      quietIndex: '静谧指数',
+      sourceLive: '韩国观光公社 DataLab · 外来访客统计（{{ym}}）',
+      sourceStatic: '以人口密度为替代值 · 等待实时访客数据',
+      why: '访客越少，静谧指数越高。不追逐热门景点，而是优先推荐数据确认的安静市·郡。',
+      cta: '用这些地区生成静谧路线',
+    },
     festivals: {
       title: '庆北庆典',
       thisWeek: '本周',
