@@ -135,14 +135,14 @@
   .insights__notice-body {@apply mt-2 text-body-sm text-body break-keep;}
 
   /* ── Journal — Wrapped 리포트 CTA ── */
-  .journal__report-cta {@apply mb-6 flex items-center gap-3 p-4 no-underline text-2xl transition-shadow hover:shadow-md border-l-4 border-l-primary;}
+  .journal__report-cta {@apply mb-6 flex items-center gap-3 p-4 no-underline text-2xl transition-shadow hover:shadow-md border border-hairline hover:border-primary/40;}
   .journal__report-text {@apply flex min-w-0 flex-1 flex-col gap-0.5;}
   .journal__report-text strong {@apply text-body-md font-semibold text-ink;}
   .journal__report-text em {@apply not-italic text-caption text-muted;}
   .journal__report-arrow {@apply text-lg text-primary;}
 
   /* ── Report — 쉼마루 Wrapped 풀스크린 스토리 ── */
-  .report {@apply fixed inset-0 z-40 flex flex-col items-center justify-center overflow-hidden px-8 text-center;background: #26251e;}
+  .report {@apply fixed inset-0 z-40 flex flex-col items-center justify-center overflow-hidden px-8 text-center;background: #201f1b;}
   .report--persona, .report--finale {background: #1c1b16;}
   .report--empty {@apply gap-4 bg-canvas;}
   .report__empty-emoji {@apply text-6xl;}
@@ -179,12 +179,12 @@
   .conquest__bar-track {@apply mt-4 h-2.5 rounded-pill bg-surface-strong/50 overflow-hidden;}
   .conquest__bar-fill {
     @apply block h-full rounded-pill;
-    background: #b23a2b;
+    background: #8f3b32;
   }
   .conquest__map {@apply mt-5;}
   .conquest__svg {@apply block w-full max-w-sm mx-auto;}
   .conquest__stamp {
-    fill: #b23a2b;
+    fill: #8f3b32;
     fill-opacity: 0.92;
     stroke: #ffffff;
     stroke-width: 3;
@@ -224,12 +224,12 @@
   .insights-map__skeleton {@apply mt-6 aspect-[0.79/1] w-full max-w-xl mx-auto rounded-xl;}
   .insights-map__bubble {@apply cursor-pointer transition-opacity;}
   .insights-map__bubble--selected {
-    stroke: #26251e;
+    stroke: #201f1b;
     stroke-width: 3;
   }
   .insights-map__gem-ring {
     fill: none;
-    stroke: #bd8f2c;
+    stroke: #8f3b32;
     stroke-width: 2.5;
     stroke-dasharray: 5 5;
   }
@@ -267,7 +267,7 @@
     background: #a09c92;
   }
   .insights-rank__bar--gem {
-    background: #bd8f2c;
+    background: #8f3b32;
   }
   .insights-rank__value {@apply font-mono text-caption text-muted text-right min-w-[3.2rem];}
 

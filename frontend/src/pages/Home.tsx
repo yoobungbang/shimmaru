@@ -15,6 +15,7 @@ import OnboardingTour from '@/components/OnboardingTour'
 import SmartHints from '@/components/SmartHints'
 import TripChatbot, { type ChatbotResult } from '@/components/TripChatbot'
 import CollabStart from '@/components/CollabStart'
+import HiddenCourse from '@/components/HiddenCourse'
 import { useCollab } from '@/stores/collab'
 import { CURATED_COURSES, type CuratedCourse } from '@/constants/curatedCourses'
 import { fetchRainChance } from '@/api/weather'
@@ -22,6 +23,7 @@ import { fetchGyeongbukVisitors } from '@/api/bigdata'
 import { loadVisitorBoost } from '@/lib/visitorIndex'
 import { useFocusTrap } from '@/lib/useFocusTrap'
 import { toast } from '@/stores/toasts'
+import { InsightsIcon, HanokIcon, DoveIcon, ScrollIcon, TreeIcon, TeaIcon, WaveIcon, PinIcon, CloseIcon } from '@/components/icons'
 import type { Companion, Course, CourseProfile, DateRange, Festival, Lang, Place, TripDuration } from '@/types/domain'
 
 const PROFILES: CourseProfile[] = [
@@ -34,13 +36,13 @@ const PROFILES: CourseProfile[] = [
 ]
 
 // Hero 의 빠른 시작 칩 — 큐레이션 코스 ID 매칭. 칩과 카드가 같은 데이터를 공유한다.
-const QUICK_CHIPS: { id: string; emoji: string; key: string }[] = [
-  { id: 'andong-hanok-2n3d',                emoji: '🏯', key: 'andongHanok' },
-  { id: 'gyeongju-silla-1n2d',              emoji: '🕊', key: 'gyeongjuSilla' },
-  { id: 'yeongju-bonghwa-seowon-1n2d',      emoji: '📜', key: 'yeongjuSeowon' },
-  { id: 'hidden-cheongsong-yeongyang-2n3d', emoji: '🌲', key: 'cheongsongHidden' },
-  { id: 'mungyeong-experience-1n2d',        emoji: '🍵', key: 'mungyeongExperience' },
-  { id: 'pohang-yeongdeok-coastal-1n2d',    emoji: '🌊', key: 'pohangCoast' },
+const QUICK_CHIPS: { id: string; Icon: typeof HanokIcon; key: string }[] = [
+  { id: 'andong-hanok-2n3d',                Icon: HanokIcon,  key: 'andongHanok' },
+  { id: 'gyeongju-silla-1n2d',              Icon: DoveIcon,   key: 'gyeongjuSilla' },
+  { id: 'yeongju-bonghwa-seowon-1n2d',      Icon: ScrollIcon, key: 'yeongjuSeowon' },
+  { id: 'hidden-cheongsong-yeongyang-2n3d', Icon: TreeIcon,   key: 'cheongsongHidden' },
+  { id: 'mungyeong-experience-1n2d',        Icon: TeaIcon,    key: 'mungyeongExperience' },
+  { id: 'pohang-yeongdeok-coastal-1n2d',    Icon: WaveIcon,   key: 'pohangCoast' },
 ]
 
 // AI 코스 생성 단계 — Cursor 타임라인 pill 매핑
@@ -311,6 +313,18 @@ export default function Home() {
     if (c) void generateFromCurated(c)
   }
 
+  /** 숨은 경북 코스 — 한적지수 상위 시·군(최대 3곳)으로 hidden_gb 프로필 코스 생성 */
+  function generateHidden(codes: number[]) {
+    if (generating || codes.length === 0) return
+    toast(t('home.curatedAppliedToast', { title: t('hidden.title') }), { type: 'success' })
+    void generateFromInput({
+      sigunguCodes: codes.slice(0, 3),
+      range: rangeFromDuration('2n3d'),
+      profiles: ['hidden_gb'],
+      duration: '2n3d',
+    })
+  }
+
   /** 챗봇 완료 — 봇이 모은 값으로 한 줄 입력과 동일한 코스 엔진 호출 */
   async function generateFromChatbot(r: ChatbotResult) {
     const range = r.dateRange ?? rangeFromDuration(r.duration)
@@ -384,7 +398,7 @@ export default function Home() {
                 disabled={generating}
                 className="chip-lg home__quick-chip"
               >
-                <span aria-hidden>{c.emoji}</span>
+                <c.Icon aria-hidden width={16} height={16} />
                 {t(`home.quickChips.${c.key}`)}
               </button>
             ))}
@@ -397,6 +411,9 @@ export default function Home() {
         </div>
 
       </section>
+
+      {/* ═══════ 숨은 경북 코스 — 한적지수(관광공사 DataLab) 데이터 근거 + 즉시 생성 ═══════ */}
+      <HiddenCourse lang={lang} generating={generating} onGenerate={generateHidden} />
 
       {/* ═══════ DATA TEASER — 데이터랩 라이브 티저 → /insights ═══════ */}
       <DataTeaser lang={lang} />
@@ -465,7 +482,7 @@ export default function Home() {
                   aria-label={t('common.close')}
                   className="home__modal-close"
                 >
-                  ✕
+                  <CloseIcon width={16} height={16} />
                 </button>
               </div>
             </header>
@@ -737,11 +754,16 @@ function DataTeaser({ lang }: { lang: Lang }) {
   return (
     <section className="home-teaser">
       <Link to="/insights" className="home-teaser__card card">
-        <span className="eyebrow home-teaser__eyebrow">{t('insights.teaserEyebrow')}</span>
-        <span className="home-teaser__title">
-          {t('insights.teaserTitle', { region: quiet.name })}
+        <span className="home-teaser__icon">
+          <InsightsIcon width={18} height={18} />
         </span>
-        <span className="home-teaser__body">{t('insights.teaserBody')}</span>
+        <span className="flex flex-col gap-1">
+          <span className="eyebrow home-teaser__eyebrow">{t('insights.teaserEyebrow')}</span>
+          <span className="home-teaser__title">
+            {t('insights.teaserTitle', { region: quiet.name })}
+          </span>
+          <span className="home-teaser__body">{t('insights.teaserBody')}</span>
+        </span>
         <span className="home-teaser__cta">{t('insights.teaserCta')} →</span>
       </Link>
     </section>
@@ -818,7 +840,8 @@ function CuratedCard({
               {(() => {
                 const first = c.themes[0]
                 const def = CATEGORIES.find((x) => x.id === first)
-                return def?.emoji ?? '◇'
+                const Icon = def?.icon ?? PinIcon
+                return <Icon width={26} height={26} />
               })()}
             </span>
           </>
@@ -842,7 +865,7 @@ function CuratedCard({
                 className="curated-card__theme"
                 aria-label={def.label[lang]}
               >
-                {def.emoji}
+                <def.icon width={13} height={13} aria-hidden />
               </span>
             )
           })}

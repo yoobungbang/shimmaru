@@ -4,62 +4,52 @@ export default {
   theme: {
     extend: {
       colors: {
-        // ─── Surface — 한지(韓紙) 아이보리 ─────────────────────────────
-        // 실리콘밸리 크림이 아니라 장지 결의 따뜻한 종이 톤. 한 단계 옅은 면은 장지 소.
-        canvas: '#f1ead9',              // 페이지 floor — 한지 natural
-        'canvas-soft': '#f6f1e5',       // 한 단계 옅은 장지 면
-        // 카드 — 순백이 아니라 미색(米色) 아이보리. 한지 위에서 살짝 들린다.
-        card: '#fbf8f0',
-        'surface-strong': '#e6dcc4',    // 배지/태그 pill (장지 강)
-        'surface-cream-strong': '#e6dcc4',
+        // ─── Surface — 한지(韓紙) 크림 ────────────────────────────
+        canvas: '#f5f1e8',              // 페이지 floor — 따뜻한 한지 베이지
+        'canvas-soft': '#eee8dc',       // 섹션 밴드, 한 단계 짙은 한지
+        // card: 한지 위에 살짝 들리는 밝은 장지.
+        card: '#fcfaf5',
+        'surface-strong': '#ded5c5',    // 배지/태그 pill
+        'surface-cream-strong': '#ded5c5',
 
-        // ─── Hairlines — 먹선(墨線)을 아주 얇게. 그림자 대신 선으로 깊이. ─
-        hairline: '#ddd2b8',
-        'hairline-soft': '#e8dfc8',
-        'hairline-strong': '#c3b58f',
+        // ─── Hairlines (그림자 없이 깊이감) ─────────────────────────
+        hairline: '#d8d0c2',
+        'hairline-soft': '#e9e3d9',
+        'hairline-strong': '#b9ae9d',
 
-        // ─── Text — 먹(墨) ────────────────────────────────────────
-        ink: '#211d14',                 // 본문/제목 — warm 먹색 near-black
-        body: '#4c4636',
-        'body-strong': '#211d14',
-        muted: '#867c66',
-        'muted-soft': '#a89d83',
+        // ─── Text — 먹(墨) ───────────────────────────────────────
+        ink: '#201f1b',                 // 본문/제목 — 먹빛 near-black
+        body: '#504c44',
+        'body-strong': '#34322d',
+        muted: '#777168',
+        'muted-soft': '#9b958b',
 
-        // ─── Brand voltage — 단청 장단(丹) 주홍 ─────────────────────
-        // 시그니처 voltage. primary CTA / 낙관(印) / wordmark 에만 희소하게.
+        // ─── Brand voltage — 단청 벽돌빛 적갈(丹靑) ──────────────────
+        // 시그니처. 핵심 CTA / 선택 상태 / 브랜드 표식에만 희소하게(화면 10% 이하).
         primary: {
-          DEFAULT: '#b23a2b',
-          active: '#922e21',
-          disabled: '#e6dcc4',
+          DEFAULT: '#8f3b32',
+          active: '#6f2c26',
+          disabled: '#ded5c5',
         },
-        'on-primary': '#fbf8f0',
+        'on-primary': '#fffcf6',
 
-        // ─── 단청 뇌록(磊碌) 청록 — 적(丹)의 짝. 링크·데이터·조용한 강조. ─
-        // 적+청록의 단청 조합이 이 디자인의 정체성. 여행앱이 잘 안 쓰는 페어링.
-        jade: {
-          DEFAULT: '#2c6a5d',
-          soft: '#e0ebe4',
-          ink: '#1f4e45',
-        },
-        // ─── 단청 황(黃) 치자빛 — "숨은 보석"·리워드 등 드문 warm 강조. ──
-        gold: {
-          DEFAULT: '#bd8f2c',
-          soft: '#f0e6c8',
-        },
+        // ─── Accent — 단청 청록/황토 (카테고리·보조 강조 한정) ─────────
+        'accent-teal': '#2f625b',
+        'accent-amber': '#a8782e',
 
-        // ─── 오방색(五方色) pastel pills — AI 코스 생성 단계 전용 ────────
-        // 시스템 액션 색으로 쓰지 말 것 — 단계 타임라인 시각화 한정.
+        // ─── Timeline pastel pills (in-product AI 단계 전용) ────────
         timeline: {
-          thinking: '#7fa8a0',      // 청 (동)
-          grep: '#c9a24a',          // 황 (중앙)
-          read: '#6f9bb0',          // 삼청
-          edit: '#a98db0',          // 자
-          done: '#b23a2b',          // 적 (남)
+          thinking: '#d6a58a',
+          grep: '#8fbf92',
+          read: '#8fb0cf',
+          edit: '#b39ac9',
+          done: '#8f3b32',          // 단청 적갈로 정렬
         },
 
         // ─── Semantic ────────────────────────────────────────────
-        success: '#2c7a5e',
-        error: '#b0243f',
+        success: '#386a50',
+        warning: '#a56b23',
+        error: '#a33f35',
       },
       fontFamily: {
         // 폰트 통일 — Pretendard Variable 단일 패밀리 (한글+라틴 모두 커버.
@@ -73,12 +63,12 @@ export default {
           'sans-serif',
         ],
         mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
-        // Display — 명조(明朝) 세리프. 브랜드·제목의 전통 감성을 담당.
-        // 사용 규칙: 큰 사이즈에서 weight 400~500 + 부정 자간. 편집체(editorial)로 절제해 쓴다.
+        // Display — MaruBuri(마루부리, 네이버 명조). 정제된 전통 명조로
+        // 히어로·페이지 제목·장소명 등 큰 제목에만. 붓글씨는 쓰지 않음.
         display: [
-          'Noto Serif KR',
+          'MaruBuri',
           'Nanum Myeongjo',
-          'Apple SD Gothic Neo',
+          'Batang',
           'serif',
         ],
       },
@@ -113,9 +103,9 @@ export default {
       // Warm-ink 그림자 — 검정 대신 ink(#26251e) 틴트로 크림 캔버스와 어울리게.
       // card: 카드 기본(거의 안 보이는 접지감) / lift: hover 리프트 / modal: 오버레이 패널.
       boxShadow: {
-        card: '0 1px 2px 0 rgba(33, 29, 20, 0.05)',
-        lift: '0 2px 8px -2px rgba(33, 29, 20, 0.09), 0 8px 24px -10px rgba(33, 29, 20, 0.14)',
-        modal: '0 24px 64px -16px rgba(33, 29, 20, 0.30)',
+        card: '0 1px 2px 0 rgba(38, 37, 30, 0.04)',
+        lift: '0 2px 8px -2px rgba(38, 37, 30, 0.08), 0 8px 24px -10px rgba(38, 37, 30, 0.12)',
+        modal: '0 24px 64px -16px rgba(38, 37, 30, 0.28)',
       },
       borderRadius: {
         xs: '4px',     // inline tags
@@ -144,11 +134,11 @@ export default {
           '0%':   { opacity: '0', transform: 'scale(0.96)' },
           '100%': { opacity: '1', transform: 'scale(1)' },
         },
-        // Builder 강조 — 적용 직후 살짝 펄스 (단청 주홍)
+        // Builder 강조 — NL 적용 직후 살짝 펄스 (Cursor Orange)
         highlight: {
-          '0%':   { boxShadow: '0 0 0 0 rgba(178, 58, 43, 0.45)' },
-          '70%':  { boxShadow: '0 0 0 10px rgba(178, 58, 43, 0)' },
-          '100%': { boxShadow: '0 0 0 0 rgba(178, 58, 43, 0)' },
+          '0%':   { boxShadow: '0 0 0 0 rgba(143, 59, 50, 0.45)' },
+          '70%':  { boxShadow: '0 0 0 10px rgba(143, 59, 50, 0)' },
+          '100%': { boxShadow: '0 0 0 0 rgba(143, 59, 50, 0)' },
         },
       },
       animation: {

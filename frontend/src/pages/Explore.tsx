@@ -25,6 +25,7 @@ import { haversineKm } from '@/lib/geo'
 import { loadVisitorBoost, quietRankFor } from '@/lib/visitorIndex'
 import { addPlaceToCourse } from '@/lib/courseActions'
 import { useToasts } from '@/stores/toasts'
+import { PinIcon, CloseIcon, ExploreIcon, SparkleIcon, AccessibleIcon, LeafIcon } from '@/components/icons'
 import type { CategoryId, Festival, Place } from '@/types/domain'
 
 type SortKey = 'popular' | 'distance' | 'quiet'
@@ -61,7 +62,7 @@ export default function Explore() {
         )
       }}
     >
-      📍 {t('course.addToCourse')}
+      <PinIcon aria-hidden width={14} height={14} /> {t('course.addToCourse')}
     </button>
   )
 
@@ -336,7 +337,9 @@ export default function Explore() {
             'explore__theme',
             THEME_MAP[theme].tone,
           )}>
-            <span className="explore__theme-emoji" aria-hidden>{THEME_MAP[theme].emoji}</span>
+            <span className="explore__theme-emoji" aria-hidden>
+              {(() => { const Icon = THEME_MAP[theme].icon; return <Icon width={18} height={18} /> })()}
+            </span>
             <div className="explore__theme-text">
               <p className="explore__theme-label">{THEME_MAP[theme].label[lang]}</p>
               <p className="explore__theme-caption">{THEME_MAP[theme].caption[lang]}</p>
@@ -351,7 +354,7 @@ export default function Explore() {
               className="explore__theme-clear"
               aria-label={t('explore.clearTheme')}
             >
-              ✕
+              <CloseIcon width={13} height={13} />
             </button>
           </div>
         )}
@@ -382,7 +385,7 @@ export default function Explore() {
               onClick={() => setCat(undefined)}
               className={clsx('explore__cat-card', !category && 'explore__cat-card--active')}
             >
-              <span className="explore__cat-emoji" aria-hidden>🧭</span>
+              <span className="explore__cat-emoji" aria-hidden><ExploreIcon width={17} height={17} /></span>
               <span className="explore__cat-label">{t('explore.categoryAll')}</span>
             </button>
             {CATEGORIES.map((c) => (
@@ -392,7 +395,7 @@ export default function Explore() {
                 onClick={() => setCat(c.id)}
                 className={clsx('explore__cat-card', category === c.id && 'explore__cat-card--active')}
               >
-                <span className="explore__cat-emoji" aria-hidden>{c.emoji}</span>
+                <span className="explore__cat-emoji" aria-hidden><c.icon width={17} height={17} /></span>
                 <span className="explore__cat-label">{c.label[lang]}</span>
               </button>
             ))}
@@ -450,7 +453,7 @@ export default function Explore() {
               className={clsx('chip', bigdataRec && 'chip-active')}
               title={t('explore.bigdataPickHint')}
             >
-              ✨ {t('explore.bigdataPick')}
+              <SparkleIcon aria-hidden width={13} height={13} /> {t('explore.bigdataPick')}
             </button>
             </div>
           </div>
@@ -496,7 +499,7 @@ export default function Explore() {
               className={clsx('chip', a11yOnly && 'chip-active')}
               title={t('explore.a11yHint')}
             >
-              ♿ {t('explore.a11yOnly')}
+              <AccessibleIcon aria-hidden width={14} height={14} /> {t('explore.a11yOnly')}
             </button>
             <button
               type="button"
@@ -518,7 +521,7 @@ export default function Explore() {
               className={clsx('chip', sort === 'quiet' && 'chip-active')}
               title={t('explore.sortQuietHint')}
             >
-              🌿 {t('explore.sortQuiet')}
+              <LeafIcon aria-hidden width={13} height={13} /> {t('explore.sortQuiet')}
             </button>
           </div>
 
@@ -602,7 +605,7 @@ export default function Explore() {
             {a11yOnly && (
               <div className="explore__notice">
                 <p className="explore__notice-eyebrow">
-                  ♿ {t('explore.a11ySourceEyebrow')}
+                  <AccessibleIcon aria-hidden width={13} height={13} /> {t('explore.a11ySourceEyebrow')}
                 </p>
                 <p className="explore__notice-body">
                   {t('explore.a11ySource')}
