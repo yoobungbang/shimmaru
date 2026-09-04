@@ -637,14 +637,21 @@ function buildQuotasMulti(
   }
   // 축제 자리는 hasFestivalLink 일 때만 1 (엔진에서 따로 강제 push 함). quota 에 명시할 필요 없음.
   merged.festival = 0
-  // 식사(맛집) 슬롯 — 기간별로 최소 한 끼를 예약. total 이 아주 작지 않은 한 캡 트림 대상에서 제외해
+
+  // 축제는 quota 밖에서 push 되므로 quota 총합 자체를 한 칸 줄여 자리를 비워둔다.
+  // (예전엔 이 예약을 아래 '메꿈' 분기에서만 반영해서, quota 가 이미 total 을 채운 경우
+  //  축제가 그 위에 얹혀 코스가 항상 target+1 개가 됐다.)
+  const slotsForFest = hasFestivalLink ? 1 : 0
+  const cap = Math.max(1, total - slotsForFest)
+
+  // 식사(맛집) 슬롯 — 기간별로 최소 한 끼를 예약. cap 이 아주 작지 않은 한 트림 대상에서 제외해
   // 지역 식사 경험이 항상 코스에 남도록 한다. (트림 order 에 restaurant 를 넣지 않아 자동 보호)
-  merged.restaurant = Math.min(mealSlots, Math.max(0, total - 1))
-  // 슬롯 캡 — total 을 넘으면 점진적으로 줄이기 (attraction 부터 깎고, 그래도 넘으면 trail/experience 순)
+  merged.restaurant = Math.min(mealSlots, Math.max(0, cap - 1))
+  // 슬롯 캡 — cap 을 넘으면 점진적으로 줄이기 (attraction 부터 깎고, 그래도 넘으면 trail/experience 순)
   let sum = Object.values(merged).reduce((a, b) => a + b, 0)
   const order: CategoryId[] = ['attraction', 'trail', 'experience', 'market', 'temple', 'seowon']
   let i = 0
-  while (sum > total && i < order.length * 3) {
+  while (sum > cap && i < order.length * 3) {
     const cat = order[i % order.length]
     if (merged[cat] > 0) {
       merged[cat] -= 1
@@ -653,9 +660,8 @@ function buildQuotasMulti(
     i++
   }
   // 슬롯이 비어 있으면 attraction 으로 메꿈 (축제 자리는 엔진에서 별도 추가)
-  const slotsForFest = hasFestivalLink ? 1 : 0
-  if (sum + slotsForFest < total) {
-    merged.attraction += total - sum - slotsForFest
+  if (sum < cap) {
+    merged.attraction += cap - sum
   }
   return merged
 }

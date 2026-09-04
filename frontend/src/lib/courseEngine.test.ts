@@ -318,6 +318,29 @@ describe('generateCourse — 축제 연계', () => {
     expect(countCat(c, 'festival')).toBe(1)
   })
 
+  it('축제는 quota 자리를 대체한다 — 목표 장소 수를 넘기지 않는다', () => {
+    // 후보가 넉넉하면 quota 가 목표치를 꽉 채우는데, 예전엔 축제가 그 위에 얹혀
+    // 코스가 항상 target+1 개가 됐다(day=4 인데 5곳). 축제 자리는 quota 안에서 예약돼야 한다.
+    const cats: CategoryId[] = [
+      'hanok', 'templestay', 'seowon', 'temple', 'experience',
+      'market', 'restaurant', 'trail', 'attraction',
+    ]
+    const candidates = cats.flatMap((category) =>
+      Array.from({ length: 4 }, () => makePlace({ sigunguCode: 11, category })),
+    )
+    const c = generateCourse(
+      baseOpts({
+        candidates,
+        festivals: [makeFestival({ sigunguCode: 11 })],
+        baseSigungus: [11],
+        profiles: ['hanok_emotion', 'festival_link'],
+        dateRange: range,
+      }),
+    )
+    expect(c.items).toHaveLength(4) // DURATION_PROFILE.day.target
+    expect(countCat(c, 'festival')).toBe(1) // 개수를 맞추느라 축제를 빼면 안 된다
+  })
+
   it('기간이 겹치지 않는 축제는 편입되지 않는다', () => {
     const candidates = Array.from({ length: 5 }, () => makePlace({ sigunguCode: 11 }))
     const past = makeFestival({
