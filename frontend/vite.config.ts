@@ -193,8 +193,11 @@ export default defineConfig(({ mode }) => {
       proxy: {
         // 한국관광공사 OpenAPI 프록시 — API 키는 .env(.local)에서 주입, 프론트 번들에 노출 금지
         '/api/tour': {
-          target: 'http://apis.data.go.kr',
+          // https — 이 프록시는 rewrite 에서 serviceKey 를 쿼리스트링에 실어 보낸다.
+          // 평문 http 면 개발 중 API 키가 네트워크에 그대로 노출된다(나머지 3개는 이미 https).
+          target: 'https://apis.data.go.kr',
           changeOrigin: true,
+          secure: true,
           rewrite: (p) => {
             // /api/tour/KorService1/areaBasedList1?... 형태 → /B551011/KorService1/areaBasedList1?...
             const stripped = p.replace(/^\/api\/tour/, '/B551011')

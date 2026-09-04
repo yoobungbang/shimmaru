@@ -1,0 +1,29 @@
+{
+  /**
+   * Vercel 서버리스 함수(../api) 타입체크 전용 프로젝트.
+   *
+   * 이게 없으면 api/ 는 tsconfig.app(include: src) 에도 tsconfig.node(include: vite.config.ts)
+   * 에도 안 잡혀서, 오타가 배포 후 런타임에서만 드러난다. 빌드(tsc -b)에 물려 미리 잡는다.
+   *
+   * 런타임은 Vercel Edge — Request/Response/fetch 는 DOM lib, process.env 는 @types/node.
+   */
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.api.tsbuildinfo",
+    "target": "es2023",
+    "lib": ["ES2023", "DOM"],
+    "module": "esnext",
+    "types": ["node"],
+    "skipLibCheck": true,
+
+    "moduleResolution": "bundler",
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["../api/**/*.ts"]
+}
