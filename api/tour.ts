@@ -10,6 +10,8 @@
  * 환경변수 (Vercel Dashboard → Settings → Environment Variables):
  *   TOUR_API_KEY = (공공데이터포털 일반 인증키 Decoding)
  */
+import { cacheHeader } from './_cache'
+
 export const config = { runtime: 'edge' }
 
 export default async function handler(req: Request): Promise<Response> {
@@ -43,7 +45,8 @@ export default async function handler(req: Request): Promise<Response> {
       status: upstream.status,
       headers: {
         'Content-Type': upstream.headers.get('content-type') ?? 'application/json',
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        // 관광지 기본정보는 분기 단위 갱신이라 24h 로 충분. 에러 본문은 캐시되지 않는다.
+        'Cache-Control': cacheHeader(upstream.status, body, 86400),
       },
     })
   } catch (err) {

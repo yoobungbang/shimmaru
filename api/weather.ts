@@ -9,6 +9,8 @@
  *   ※ data.go.kr 에서 "기상청_단기예보 조회서비스" 활용신청이 되어 있어야 한다.
  *      미신청 시 클라이언트(weather.ts)가 평년값으로 graceful 폴백한다.
  */
+import { cacheHeader } from './_cache'
+
 export const config = { runtime: 'edge' }
 
 export default async function handler(req: Request): Promise<Response> {
@@ -33,7 +35,7 @@ export default async function handler(req: Request): Promise<Response> {
       headers: {
         'Content-Type': upstream.headers.get('content-type') ?? 'application/json',
         // 단기예보는 자주 바뀌므로 30분 캐시 + SWR
-        'Cache-Control': 'public, s-maxage=1800, stale-while-revalidate=3600',
+        'Cache-Control': cacheHeader(upstream.status, body, 1800),
       },
     })
   } catch (err) {

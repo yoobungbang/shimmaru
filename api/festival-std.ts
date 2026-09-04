@@ -9,6 +9,8 @@
  *   (운영 env 에 FESTIVAL_STD_API_KEY 미설정 시에도 축제가 깨지지 않도록 폴백)
  * Endpoint: https://api.data.go.kr/openapi/tn_pubr_public_cltur_fstvl_api
  */
+import { cacheHeader } from './_cache'
+
 export const config = { runtime: 'edge' }
 
 export default async function handler(req: Request): Promise<Response> {
@@ -30,7 +32,7 @@ export default async function handler(req: Request): Promise<Response> {
       headers: {
         'Content-Type': upstream.headers.get('content-type') ?? 'application/json',
         // 분기 갱신이라 24h s-maxage + 7일 stale-while-revalidate
-        'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800',
+        'Cache-Control': cacheHeader(upstream.status, body, 86400),
       },
     })
   } catch (err) {
