@@ -17,6 +17,16 @@ export default async function handler(req: Request): Promise<Response> {
   const path = url.searchParams.get('path') ?? ''
   url.searchParams.delete('path')
 
+  // path 는 클라이언트가 보내는 값이다. new URL(...) 이 `..` 를 정규화하므로
+  // path=../1360000/Foo 같은 값이면 B551011(관광공사) 밖의 다른 기관 API 로 나가면서
+  // 아래에서 우리 serviceKey 까지 주입된다 — 키 도용. 서비스 경로 형태만 허용한다.
+  if (!/^[A-Za-z0-9_-]+\/[A-Za-z0-9_-]+$/.test(path)) {
+    return new Response(JSON.stringify({ error: 'invalid path' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    })
+  }
+
   const target = new URL(`https://apis.data.go.kr/B551011/${path}`)
   url.searchParams.forEach((v, k) => target.searchParams.set(k, v))
 

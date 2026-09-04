@@ -160,23 +160,7 @@ export const useCollab = create<CollabState>()(
         const { code } = get()
         if (!code || !isCollabConfigured()) return
         if (pushTimer) clearTimeout(pushTimer)
-        pushTimer = setTimeout(() => {
-          void (async () => {
-            const sb = await getSupabase()
-            if (!sb) return
-            const nextVersion = get().version + 1
-            const payload: Course = { ...course, collabCode: code, updatedAt: new Date().toISOString() }
-            const { error } = await sb
-              .from('shared_courses')
-              .update({ course: payload, version: nextVersion, updated_at: payload.updatedAt })
-              .eq('code', code)
-            if (error) {
-              console.error('[collab.publish]', error)
-              return
-            }
-            set({ version: nextVersion })
-          })()
-        }, 350)
+        pushTimer = setTimeout(() => void pushNow(code, course, set, get), 350)
       },
 
       leaveRoom: () => {
@@ -191,6 +175,60 @@ export const useCollab = create<CollabState>()(
     },
   ),
 )
+
+/**
+ * 서버 반영 — 낙관적 동시성(optimistic concurrency).
+ *
+ * `.eq('version', base)` 가 핵심이다. 이게 없으면 두 기기가 동시에 편집할 때
+ * 나중 쓰기가 상대 편집을 통째로 덮어써서 데이터가 사라진다. 서버 버전이 내가 읽은
+ * 버전과 같을 때만 쓰고, 아니면 0행이 갱신되며 충돌로 판정한다.
+ *
+ * 충돌 시엔 realtime 구독이 원격 버전을 mergeCourses(union)로 병합해 넣어줄 시간을 준 뒤
+ * 그 병합본으로 다시 올린다. 내 편집도 상대 편집도 남는다.
+ *
+ * ponytail: 클라이언트측 재시도 2회. 3인 이상 동시 편집이 흔해져 재시도가 자주 소진되면
+ *           서버측 Postgres 함수(RPC)에서 머지+증가를 원자적으로 하도록 승격.
+ */
+async function pushNow(
+  code: string,
+  course: Course,
+  set: (partial: Partial<CollabState>) => void,
+  get: () => CollabState,
+  attempt = 0,
+): Promise<void> {
+  const sb = await getSupabase()
+  if (!sb) return
+  if (get().code !== code) return // 그 사이 방을 나갔거나 옮김
+
+  const base = get().version
+  const payload: Course = { ...course, collabCode: code, updatedAt: new Date().toISOString() }
+  const { data, error } = await sb
+    .from('shared_courses')
+    .update({ course: payload, version: base + 1, updated_at: payload.updatedAt })
+    .eq('code', code)
+    .eq('version', base)
+    .select('version')
+
+  if (error) {
+    console.error('[collab.publish]', error)
+    return
+  }
+  if (data && data.length > 0) {
+    set({ version: base + 1 })
+    return
+  }
+
+  // 0행 = 그 사이 상대가 먼저 썼다. realtime 병합을 기다렸다가 병합본으로 재시도.
+  if (attempt >= 2) {
+    console.warn('[collab.publish] 동시 편집 충돌 — 재시도 소진, 다음 편집 때 다시 반영됨')
+    return
+  }
+  await new Promise((r) => setTimeout(r, 400))
+  const merged = useCourses.getState().current
+  if (merged && merged.collabCode === code) {
+    await pushNow(code, merged, set, get, attempt + 1)
+  }
+}
 
 /** Realtime 구독 — 행 변경(postgres_changes) + 접속자(presence)를 구독한다. */
 async function subscribe(
