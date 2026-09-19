@@ -513,4 +513,18 @@ describe('응집 선택 — 동점 후보가 반경 전체에 흩어져 있어�
     expect(course.items.length).toBe(4)
     expect(course.totalDistanceKm).toBeLessThan(15)
   })
+  it('찜한 장소는 멀어도 빠지지 않는다', () => {
+    const candidates = Array.from({ length: 12 }, (_, i) => makePlace({ position: offsetKm(1 + i * 0.5) }))
+    const fav = makePlace({ position: offsetKm(-20) })
+    const course = generateCourse({
+      candidates: [...candidates, fav],
+      festivals: [],
+      baseSigungus: [],
+      baseCenter: ANDONG,
+      duration: 'day',
+      favorites: [fav],
+      lang: 'ko',
+    } as GenerateOptions)
+    expect(course.items.map((it) => it.place.id)).toContain(fav.id)
+  })
 })

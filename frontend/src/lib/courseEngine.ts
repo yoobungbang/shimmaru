@@ -211,7 +211,8 @@ export function generateCourse(opts: GenerateOptions): Course {
       let best: Place | undefined
       let bestVal = -1
       for (const s of pool) {
-        const d = haversineKm(anchor, s.place.position) / durProfile.clusterKm
+        // 찜한 장소는 거리 감점 없음 — 사용자가 직접 고른 곳을 동선 때문에 말없이 빼면 안 된다.
+        const d = favoriteIds.has(s.place.id) ? 0 : haversineKm(anchor, s.place.position) / durProfile.clusterKm
         const v = s.score / (1 + d * d)
         if (v > bestVal) {
           bestVal = v
@@ -248,7 +249,7 @@ export function generateCourse(opts: GenerateOptions): Course {
   let ordered = twoOptImprove(nnOrdered, baseCenter)
 
   // 3.5) 동선 위생 — 순서를 잘 짜도 아웃라이어가 뽑혀 있으면 장거리 구간이 남는다.
-  ordered = enforceLegLimit(ordered, baseCenter, durProfile.legLimitKm, scored, usedIds, baseSigungus)
+  ordered = enforceLegLimit(ordered, baseCenter, durProfile.legLimitKm, scored, usedIds, baseSigungus, favoriteIds)
 
   // 4) 거리 계산
   const items: CourseItem[] = ordered.map((p, i) => {
@@ -676,6 +677,7 @@ function enforceLegLimit(
   scored: { place: Place; score: number }[],
   usedIds: Set<string>,
   baseSigungus: number[],
+  favoriteIds: Set<string>,
 ): Place[] {
   if (ordered.length === 0) return ordered
   let current = [...ordered]
@@ -696,7 +698,11 @@ function enforceLegLimit(
     if (worstIdx === -1) break
 
     // 아웃라이어 = 구간 양 끝(첫 구간이면 첫 장소만) 중 무게중심에서 먼 쪽
-    const endpoints = worstIdx === 0 ? [0] : [worstIdx - 1, worstIdx]
+    // 찜한 장소는 아웃라이어로 빼지 않는다 — 양 끝이 다 찜이면 그 장거리 구간은 사용자 선택으로 수용.
+    const endpoints = (worstIdx === 0 ? [0] : [worstIdx - 1, worstIdx]).filter(
+      (idx) => !favoriteIds.has(current[idx].id),
+    )
+    if (endpoints.length === 0) break
     let outlierIdx = endpoints[0]
     let outlierDist = -1
     for (const idx of endpoints) {
