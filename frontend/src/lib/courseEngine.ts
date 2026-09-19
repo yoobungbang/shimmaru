@@ -99,15 +99,17 @@ interface DurationProfile {
   radiusKm: number
   hardCutoffKm: number
   legLimitKm: number
+  /** 선택 응집 반경 — 이미 고른 장소들의 무게중심에서 이만큼 멀어지면 점수가 절반 */
+  clusterKm: number
   allowLodging: boolean
   /** 거점 시군구 외부 후보의 점수 곱 — 당일치기는 거의 0 */
   offBaseMult: number
 }
 const DURATION_PROFILE: Record<TripDuration, DurationProfile> = {
-  day:    { target: 4, radiusKm: 25, hardCutoffKm: 35,  legLimitKm: 30, allowLodging: false, offBaseMult: 0.15 },
-  '1n2d': { target: 6, radiusKm: 50, hardCutoffKm: 70,  legLimitKm: 50, allowLodging: true,  offBaseMult: 0.45 },
-  '2n3d': { target: 8, radiusKm: 80, hardCutoffKm: 110, legLimitKm: 75, allowLodging: true,  offBaseMult: 0.65 },
-  custom: { target: 6, radiusKm: 50, hardCutoffKm: 70,  legLimitKm: 50, allowLodging: true,  offBaseMult: 0.45 },
+  day:    { target: 4, radiusKm: 15, hardCutoffKm: 25,  legLimitKm: 15, clusterKm: 6,  allowLodging: false, offBaseMult: 0.15 },
+  '1n2d': { target: 6, radiusKm: 35, hardCutoffKm: 50,  legLimitKm: 25, clusterKm: 10, allowLodging: true,  offBaseMult: 0.45 },
+  '2n3d': { target: 8, radiusKm: 60, hardCutoffKm: 85,  legLimitKm: 35, clusterKm: 15, allowLodging: true,  offBaseMult: 0.65 },
+  custom: { target: 6, radiusKm: 35, hardCutoffKm: 50,  legLimitKm: 25, clusterKm: 10, allowLodging: true,  offBaseMult: 0.45 },
 }
 
 /**
@@ -195,14 +197,31 @@ export function generateCourse(opts: GenerateOptions): Course {
   applyCompanionQuotas(quotas, companions)
   const picked: Place[] = []
   const usedIds = new Set<string>()
+  const quotaLeft: Partial<Record<CategoryId, number>> = { ...quotas }
 
-  for (const cat of Object.keys(quotas) as CategoryId[]) {
-    const need = quotas[cat]
-    if (!need) continue
-    const fromCat = scored.filter((s) => s.place.category === cat && !usedIds.has(s.place.id))
-    for (let i = 0; i < need && i < fromCat.length; i++) {
-      picked.push(fromCat[i].place)
-      usedIds.add(fromCat[i].place.id)
+  // 응집 선택 — 한 곳씩 뽑되, 이미 고른 장소들의 무게중심에서 먼 후보일수록 점수를 깎는다.
+  // 점수(카테고리 가중치)가 동점투성이라 거리 기준이 없으면 반경 양 끝을 오가는 코스가 나온다.
+  // 카테고리 quota 가 남아 있는 동안은 quota 카테고리 안에서만 고른다.
+  const pickUntil = (n: number) => {
+    while (picked.length < n) {
+      const anchor = picked.length > 0 ? centroid(picked.map((p) => p.position)) : baseCenter
+      const open = scored.filter((s) => !usedIds.has(s.place.id))
+      const inQuota = open.filter((s) => (quotaLeft[s.place.category] ?? 0) > 0)
+      const pool = inQuota.length > 0 ? inQuota : open
+      let best: Place | undefined
+      let bestVal = -1
+      for (const s of pool) {
+        const d = haversineKm(anchor, s.place.position) / durProfile.clusterKm
+        const v = s.score / (1 + d * d)
+        if (v > bestVal) {
+          bestVal = v
+          best = s.place
+        }
+      }
+      if (!best) return
+      picked.push(best)
+      usedIds.add(best.id)
+      if (quotaLeft[best.category]) quotaLeft[best.category]! -= 1
     }
   }
   // 축제 — 축제연계 프로필 + 여행 기간에 열리는 축제가 있으면 거점에서 가장 가까운 1개를 예약.
@@ -213,29 +232,16 @@ export function generateCourse(opts: GenerateOptions): Course {
         )
       : undefined
 
-  // 부족분은 점수 순으로 보충 (FR-17 — 찜 부족 시 동일 카테고리·인근 보완)
+  // 부족분은 응집 선택으로 보충 (FR-17 — 찜 부족 시 동일 카테고리·인근 보완)
   // 축제 슬롯이 예약돼 있으면 그만큼 비워 둔다 — 보충이 다 채우면 축제가 desired+1 번째로 초과된다.
-  const fillTarget = chosenFest ? desired - 1 : desired
-  for (const s of scored) {
-    if (picked.length >= fillTarget) break
-    if (!usedIds.has(s.place.id)) {
-      picked.push(s.place)
-      usedIds.add(s.place.id)
-    }
-  }
+  pickUntil(chosenFest ? desired - 1 : desired)
 
   if (chosenFest && !usedIds.has(chosenFest.id) && !picked.some((p) => p.category === 'festival')) {
     picked.push(chosenFest)
     usedIds.add(chosenFest.id)
   }
   // 예약 슬롯을 축제로 못 채운 경우(이미 축제 포함 등) 일반 후보로 마저 채운다.
-  for (const s of scored) {
-    if (picked.length >= desired) break
-    if (!usedIds.has(s.place.id)) {
-      picked.push(s.place)
-      usedIds.add(s.place.id)
-    }
-  }
+  pickUntil(desired)
 
   // 3) NN 정렬 — 거점 여러 곳이면 시군구별 클러스터로 묶어 점프 최소화. 이후 2-opt 로 총 이동거리 최소화.
   const nnOrdered = clusteredNearestNeighbor(picked, baseCenter, baseSigungus)

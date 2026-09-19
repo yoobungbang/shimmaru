@@ -495,3 +495,22 @@ describe('generateCourse — 자동 제목', () => {
     expect(c.title).toContain('Bonghwa')
   })
 })
+
+describe('응집 선택 — 동점 후보가 반경 전체에 흩어져 있어도 코스는 한 생활권에 모인다', () => {
+  it('당일치기 총 이동거리가 짧다', () => {
+    // 거점 남북 ±2~12km 에 동점 관광지 22곳, 먼 것부터 나열 — 점수만 보면 양 끝(±12, ±11)을 뽑는다.
+    const candidates = Array.from({ length: 22 }, (_, i) =>
+      makePlace({ position: offsetKm((i % 2 ? -1 : 1) * (12 - Math.floor(i / 2))) }),
+    )
+    const course = generateCourse({
+      candidates,
+      festivals: [],
+      baseSigungus: [],
+      baseCenter: ANDONG,
+      duration: 'day',
+      lang: 'ko',
+    } as GenerateOptions)
+    expect(course.items.length).toBe(4)
+    expect(course.totalDistanceKm).toBeLessThan(15)
+  })
+})
