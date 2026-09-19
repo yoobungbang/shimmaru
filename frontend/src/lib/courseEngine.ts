@@ -87,6 +87,9 @@ const RAIN_MULT: Record<RainHint, Partial<Record<CategoryId, number>>> = {
   'clear': {},
 }
 
+/** 비를 피할 수 있는 카테고리. 나머지(서원·사찰·둘레길·관광지·축제)는 실외로 본다. */
+const INDOOR = new Set<CategoryId>(['hanok', 'templestay', 'experience', 'market', 'restaurant'])
+
 const DEFAULT_PROFILE: CourseProfile = 'hanok_emotion'
 
 /**
@@ -198,6 +201,11 @@ export function generateCourse(opts: GenerateOptions): Course {
   const picked: Place[] = []
   const usedIds = new Set<string>()
   const quotaLeft: Partial<Record<CategoryId, number>> = { ...quotas }
+  // 날씨 비율 — 비 예보면 코스의 2/3 이상 실내, 맑으면 2/3 이상 실외. 애매(unstable)하면 점수 가중만.
+  const weatherSide =
+    rainHint === 'rain-likely' ? true : rainHint === 'clear' ? false : undefined
+  const weatherNeed = Math.ceil((desired * 2) / 3)
+  const onSide = (p: Place) => INDOOR.has(p.category) === weatherSide
 
   // 응집 선택 — 한 곳씩 뽑되, 이미 고른 장소들의 무게중심에서 먼 후보일수록 점수를 깎는다.
   // 점수(카테고리 가중치)가 동점투성이라 거리 기준이 없으면 반경 양 끝을 오가는 코스가 나온다.
@@ -207,7 +215,13 @@ export function generateCourse(opts: GenerateOptions): Course {
       const anchor = picked.length > 0 ? centroid(picked.map((p) => p.position)) : baseCenter
       const open = scored.filter((s) => !usedIds.has(s.place.id))
       const inQuota = open.filter((s) => (quotaLeft[s.place.category] ?? 0) > 0)
-      const pool = inQuota.length > 0 ? inQuota : open
+      let pool = inQuota.length > 0 ? inQuota : open
+      // 남은 자리를 전부 날씨 쪽으로 채워야 비율이 맞는 시점부터는 그쪽 후보만 본다.
+      if (weatherSide !== undefined && weatherNeed - picked.filter(onSide).length >= n - picked.length) {
+        const side = pool.filter((s) => onSide(s.place))
+        const sideAny = open.filter((s) => onSide(s.place))
+        pool = side.length > 0 ? side : sideAny.length > 0 ? sideAny : pool
+      }
       let best: Place | undefined
       let bestVal = -1
       for (const s of pool) {

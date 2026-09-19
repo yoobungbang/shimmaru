@@ -528,3 +528,23 @@ describe('응집 선택 — 동점 후보가 반경 전체에 흩어져 있어�
     expect(course.items.map((it) => it.place.id)).toContain(fav.id)
   })
 })
+
+describe('날씨 비율 — 비 오면 실내 2/3 이상, 맑으면 실외 2/3 이상', () => {
+  const INDOOR = new Set(['hanok', 'templestay', 'experience', 'market', 'restaurant'])
+  // 실외(관광지·둘레길)를 앞쪽·가까이에 둬서 날씨 로직이 없으면 실외만 뽑히게 한다.
+  const mk = () => [
+    ...Array.from({ length: 6 }, (_, i) => makePlace({ category: 'attraction', position: offsetKm(0.5 + i * 0.2) })),
+    ...Array.from({ length: 6 }, (_, i) => makePlace({ category: 'experience', position: offsetKm(2 + i * 0.2) })),
+  ]
+  const indoorCount = (c: Course) => c.items.filter((it) => INDOOR.has(it.place.category)).length
+  const gen = (rainHint: 'rain-likely' | 'clear') =>
+    generateCourse({ candidates: mk(), festivals: [], baseSigungus: [], baseCenter: ANDONG, duration: 'day', rainHint, lang: 'ko' } as GenerateOptions)
+
+  it('비 예보면 4곳 중 3곳 이상 실내', () => {
+    expect(indoorCount(gen('rain-likely'))).toBeGreaterThanOrEqual(3)
+  })
+  it('맑으면 4곳 중 3곳 이상 실외', () => {
+    const c = gen('clear')
+    expect(c.items.length - indoorCount(c)).toBeGreaterThanOrEqual(3)
+  })
+})
